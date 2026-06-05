@@ -1,0 +1,1240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Levin Promos | Branded Merch, Kits & Catalog</title>
+  <meta name="description" content="Levin Promos helps North American teams source, customize, kit, and deliver promotional products with global supply chain support.">
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #667085;
+      --line: #e6e9ee;
+      --paper: #ffffff;
+      --soft: #f4f7f7;
+      --blue: #1d5f8f;
+      --teal: #12a6a1;
+      --coral: #ee6b4d;
+      --gold: #d9a441;
+      --navy: #0f3148;
+      --shadow: 0 18px 55px rgba(15, 49, 72, .13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: var(--paper);
+      line-height: 1.55;
+      overflow-x: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, .94);
+      border-bottom: 1px solid rgba(230, 233, 238, .9);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      width: min(1180px, calc(100% - 40px));
+      min-height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 190px;
+      font-weight: 800;
+      letter-spacing: .01em;
+    }
+
+    .brand img {
+      width: 128px;
+      height: auto;
+      filter: brightness(0) saturate(100%) invert(18%) sepia(24%) saturate(1127%) hue-rotate(164deg) brightness(92%) contrast(93%);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      color: #334155;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .nav-links a {
+      padding: 8px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus {
+      color: var(--blue);
+      border-bottom-color: var(--teal);
+      outline: none;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 11px 18px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      font-weight: 800;
+      font-size: 14px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+    }
+
+    .btn:hover,
+    .btn:focus {
+      transform: translateY(-1px);
+      outline: none;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: var(--blue);
+      box-shadow: 0 10px 28px rgba(29, 95, 143, .22);
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background: #174d76;
+    }
+
+    .btn-light {
+      color: var(--navy);
+      background: #fff;
+      border-color: var(--line);
+    }
+
+    .btn-light:hover,
+    .btn-light:focus {
+      border-color: #b7c8d6;
+      box-shadow: 0 10px 24px rgba(15, 49, 72, .09);
+    }
+
+    .btn-dark {
+      color: #fff;
+      background: var(--ink);
+    }
+
+    .section {
+      padding: 88px 0;
+    }
+
+    .section.soft {
+      background: var(--soft);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: grid;
+      align-items: center;
+      background:
+        linear-gradient(90deg, rgba(15, 49, 72, .96) 0%, rgba(15, 49, 72, .86) 43%, rgba(15, 49, 72, .18) 74%, rgba(15, 49, 72, .04) 100%),
+        url("Uploads/6180f90da577a4261.jpg") center / cover no-repeat;
+      color: #fff;
+    }
+
+    .hero-inner {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 80px 0 56px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.02fr) minmax(340px, .62fr);
+      gap: 58px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      margin: 0 0 18px;
+      color: #8fe4df;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 800px;
+      margin-bottom: 22px;
+      font-size: clamp(52px, 6vw, 92px);
+      line-height: .96;
+      letter-spacing: 0;
+    }
+
+    .hero-copy {
+      max-width: 670px;
+      color: rgba(255, 255, 255, .86);
+      font-size: 19px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .hero-card {
+      align-self: stretch;
+      display: grid;
+      align-content: end;
+      gap: 14px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, .16);
+      background: rgba(15, 49, 72, .72);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, .22);
+    }
+
+    .hero-card strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .hero-card span {
+      color: rgba(255, 255, 255, .78);
+      font-size: 14px;
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 46px;
+      max-width: 860px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-top: 1px solid rgba(255, 255, 255, .22);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, .76);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, .78fr) minmax(260px, .42fr);
+      gap: 34px;
+      align-items: end;
+      margin-bottom: 36px;
+    }
+
+    .section-head h2 {
+      margin-bottom: 0;
+      font-size: clamp(34px, 4.2vw, 58px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .section-head p {
+      margin-bottom: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .service {
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 26px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      position: relative;
+    }
+
+    .service:before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 5px;
+      background: var(--accent, var(--blue));
+    }
+
+    .service h3 {
+      margin-bottom: 12px;
+      font-size: 27px;
+      line-height: 1.05;
+    }
+
+    .service p {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .service a {
+      display: inline-flex;
+      width: fit-content;
+      color: var(--blue);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .service a:hover,
+    .service a:focus {
+      color: var(--teal);
+      outline: none;
+    }
+
+    .catalog-panel {
+      display: grid;
+      grid-template-columns: 310px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .catalog-aside {
+      position: sticky;
+      top: 96px;
+      padding: 26px;
+      color: #fff;
+      background: var(--navy);
+    }
+
+    .catalog-aside h3 {
+      margin-bottom: 12px;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .catalog-aside p {
+      color: rgba(255, 255, 255, .74);
+      font-size: 15px;
+    }
+
+    .catalog-search {
+      display: flex;
+      margin-top: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, .2);
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .catalog-search input {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 14px;
+      color: #fff;
+      border: 0;
+      background: transparent;
+      font: inherit;
+    }
+
+    .catalog-search input::placeholder {
+      color: rgba(255, 255, 255, .7);
+    }
+
+    .catalog-search button {
+      width: 52px;
+      color: #fff;
+      border: 0;
+      background: var(--teal);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .category {
+      min-height: 172px;
+      display: grid;
+      align-content: space-between;
+      padding: 21px;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .category:hover,
+    .category:focus {
+      transform: translateY(-2px);
+      border-color: #c7d7e4;
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .category span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .category h3 {
+      margin: 12px 0 0;
+      font-size: 22px;
+      line-height: 1.12;
+    }
+
+    .category small {
+      color: var(--blue);
+      font-weight: 900;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .product {
+      display: grid;
+      grid-template-rows: 220px auto;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .product:hover,
+    .product:focus {
+      transform: translateY(-2px);
+      border-color: #c7d7e4;
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .product-media {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: #f7f9fb;
+    }
+
+    .product-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    .product-body {
+      padding: 18px;
+      min-height: 132px;
+    }
+
+    .product-body span {
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .product-body h3 {
+      margin: 8px 0 12px;
+      font-size: 18px;
+      line-height: 1.18;
+    }
+
+    .product-body small {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 48px;
+      align-items: center;
+    }
+
+    .split h2 {
+      margin-bottom: 18px;
+      font-size: clamp(36px, 4.5vw, 66px);
+      line-height: .98;
+    }
+
+    .split p {
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .proof-list {
+      display: grid;
+      gap: 12px;
+      margin: 26px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .proof-list li {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 12px;
+      align-items: start;
+      color: #344054;
+      font-weight: 700;
+    }
+
+    .proof-list b {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      color: #fff;
+      background: var(--teal);
+      border-radius: 50%;
+      font-size: 13px;
+    }
+
+    .kit-board {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      min-height: 510px;
+    }
+
+    .kit-shot {
+      position: relative;
+      overflow: hidden;
+      background: #eaf0f3;
+    }
+
+    .kit-shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .kit-stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .kit-mini {
+      display: grid;
+      grid-template-columns: 118px minmax(0, 1fr);
+      gap: 16px;
+      align-items: center;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .kit-mini img {
+      width: 118px;
+      height: 98px;
+      object-fit: contain;
+      background: #f7f9fb;
+    }
+
+    .kit-mini h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+    }
+
+    .kit-mini p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .process {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .step {
+      min-height: 220px;
+      padding: 24px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step span {
+      display: block;
+      margin-bottom: 42px;
+      color: var(--coral);
+      font-weight: 900;
+      font-size: 13px;
+      letter-spacing: .1em;
+    }
+
+    .step h3 {
+      margin-bottom: 10px;
+      font-size: 21px;
+      line-height: 1.15;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cta {
+      color: #fff;
+      background: var(--navy);
+      padding: 74px 0;
+    }
+
+    .cta-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .cta h2 {
+      max-width: 790px;
+      margin-bottom: 10px;
+      font-size: clamp(36px, 4vw, 58px);
+      line-height: 1;
+    }
+
+    .cta p {
+      margin-bottom: 0;
+      color: rgba(255, 255, 255, .74);
+    }
+
+    .footer {
+      padding: 40px 0;
+      color: #d9e6ee;
+      background: #0a2234;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .footer img {
+      width: 130px;
+      margin-bottom: 12px;
+      filter: brightness(0) invert(1);
+    }
+
+    .footer p {
+      max-width: 580px;
+      margin: 0;
+      color: rgba(255, 255, 255, .68);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px 22px;
+      justify-content: flex-end;
+      color: rgba(255, 255, 255, .78);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 1020px) {
+      .nav {
+        min-height: auto;
+        padding: 14px 0;
+        align-items: flex-start;
+      }
+
+      .nav,
+      .nav-links,
+      .nav-actions {
+        flex-wrap: wrap;
+      }
+
+      .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 16px;
+      }
+
+      .hero-grid,
+      .section-head,
+      .catalog-panel,
+      .split,
+      .cta-inner,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .catalog-aside {
+        position: static;
+      }
+
+      .service-grid,
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .process {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 680px) {
+      .wrap,
+      .nav,
+      .hero-inner {
+        width: min(362px, calc(100vw - 28px));
+        max-width: min(362px, calc(100vw - 28px));
+        margin-left: 14px;
+        margin-right: 14px;
+      }
+
+      .hero {
+        min-height: auto;
+        background:
+          linear-gradient(180deg, rgba(15, 49, 72, .96) 0%, rgba(15, 49, 72, .82) 62%, rgba(15, 49, 72, .55) 100%),
+          url("Uploads/6180f90da577a4261.jpg") center / cover no-repeat;
+      }
+
+      .hero-inner {
+        padding: 54px 0 34px;
+      }
+
+      .brand img {
+        width: 132px;
+      }
+
+      .nav-actions {
+        flex: 0 0 100%;
+        width: min(362px, calc(100vw - 28px));
+        max-width: min(362px, calc(100vw - 28px));
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        white-space: normal;
+      }
+
+      .nav-actions .btn {
+        min-width: 0;
+        padding-inline: 8px;
+        font-size: 13px;
+        text-align: center;
+      }
+
+      .nav-links {
+        max-width: min(362px, calc(100vw - 28px));
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px 12px;
+      }
+
+      .hero-grid,
+      .hero-copy,
+      .hero-card,
+      .section-head,
+      .split,
+      .catalog-panel,
+      .cta-inner,
+      .footer-grid {
+        width: 100%;
+        max-width: min(362px, calc(100vw - 28px));
+        min-width: 0;
+      }
+
+      .nav-links a {
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        font-size: 13px;
+      }
+
+      h1 {
+        font-size: 46px;
+      }
+
+      .hero-copy {
+        font-size: 17px;
+      }
+
+      .hero-card {
+        padding: 20px;
+      }
+
+      .hero-stats,
+      .service-grid,
+      .category-grid,
+      .products-grid,
+      .kit-board,
+      .process {
+        grid-template-columns: 1fr;
+      }
+
+      .section {
+        padding: 58px 0;
+      }
+
+      .service {
+        min-height: 250px;
+      }
+
+      .product {
+        grid-template-rows: 210px auto;
+      }
+
+      .kit-mini {
+        grid-template-columns: 96px minmax(0, 1fr);
+      }
+
+      .kit-mini img {
+        width: 96px;
+        height: 84px;
+      }
+
+      .footer-links {
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html" aria-label="Levin Promos home">
+        <img src="Uploads/60890612afc181437.png" alt="Levin Promos">
+      </a>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#catalog">Catalog</a>
+        <a href="#products">Products</a>
+        <a href="#kits">Kits & Stores</a>
+        <a href="case-studio.html">Case Studio</a>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-light" href="digital-catalogs.html">eCatalogs</a>
+        <a class="btn btn-primary" href="contact-us/index.html">Start a Project</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <div class="hero-grid">
+          <div>
+            <p class="eyebrow">North American promo programs, global sourcing support</p>
+            <h1 id="hero-title">Branded merch managed from idea to delivery.</h1>
+            <p class="hero-copy">Levin Promos helps teams source custom products, build gift kits, manage online catalogs, and ship campaign-ready merchandise across markets.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#catalog">Browse Catalog</a>
+              <a class="btn btn-light" href="#services">See Services</a>
+            </div>
+            <div class="hero-stats" aria-label="Levin Promos strengths">
+              <div class="stat">
+                <b>13</b>
+                <span>Product categories</span>
+              </div>
+              <div class="stat">
+                <b>700+</b>
+                <span>Catalog product pages</span>
+              </div>
+              <div class="stat">
+                <b>US / DE / CN</b>
+                <span>Service footprint</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-card">
+            <span>Current focus</span>
+            <strong>Promotional products that feel useful, not disposable.</strong>
+            <span>Drinkware, bags, apparel, office goods, outdoor gear, gift sets, and fully custom sourced ideas.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="services">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>All things promo, without the chase.</h2>
+          <p>Lead with clear solutions first, then let the catalog support the buyer journey with fast product discovery.</p>
+        </div>
+        <div class="service-grid">
+          <article class="service" style="--accent: var(--teal);">
+            <div>
+              <p class="eyebrow">Merch</p>
+              <h3>Custom branded everything.</h3>
+              <p>From hard goods to apparel, Levin can help find useful products that match the audience, event, budget, and brand standards.</p>
+            </div>
+            <a href="product.html">Shop products</a>
+          </article>
+          <article class="service" style="--accent: var(--coral);">
+            <div>
+              <p class="eyebrow">Kitting</p>
+              <h3>Gift sets built to arrive ready.</h3>
+              <p>Combine products, packaging, inserts, and fulfillment into welcome kits, holiday gifts, event boxes, or employee appreciation programs.</p>
+            </div>
+            <a href="Promotional-Gift-Sets.html">Explore gift sets</a>
+          </article>
+          <article class="service" style="--accent: var(--gold);">
+            <div>
+              <p class="eyebrow">Catalog</p>
+              <h3>One place for product discovery.</h3>
+              <p>Give buyers a cleaner way to browse categories, spot best-fit items, and move quickly into inquiry or sample requests.</p>
+            </div>
+            <a href="#catalog">Browse categories</a>
+          </article>
+          <article class="service" style="--accent: var(--blue);">
+            <div>
+              <p class="eyebrow">Sourcing</p>
+              <h3>Global options, practical timelines.</h3>
+              <p>Use Levin's sourcing and quality-control workflow for custom shapes, private label ideas, seasonal campaigns, and repeat programs.</p>
+            </div>
+            <a href="our-service.html">View process</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="catalog">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Catalog built for actual buying behavior.</h2>
+          <p>Instead of hiding products inside a flat menu, surface categories by how buyers search: use case, item type, campaign, and urgency.</p>
+        </div>
+        <div class="catalog-panel">
+          <aside class="catalog-aside">
+            <h3>Your merch, easier to source.</h3>
+            <p>Search the local mirror or jump into the strongest product families. Each category still links to Levin's existing catalog pages.</p>
+            <form class="catalog-search" action="search/index.html" method="get">
+              <input name="name" type="search" placeholder="Search water bottle, tote, cap...">
+              <button type="submit" aria-label="Search">→</button>
+            </form>
+          </aside>
+          <div class="category-grid">
+            <a class="category" href="Drinkware.html">
+              <div>
+                <span>Drinkware</span>
+                <h3>Mugs, bottles, glassware, straws</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Bags-Totes.html">
+              <div>
+                <span>Bags</span>
+                <h3>Totes, backpacks, lunch bags, drawstrings</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Apparel-Accessories.html">
+              <div>
+                <span>Apparel</span>
+                <h3>T-shirts, hoodies, hats, gloves, accessories</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Outdoor-Sports.html">
+              <div>
+                <span>Outdoor</span>
+                <h3>Golf, camping, umbrellas, coolers, fitness</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Office-Suppliers.html">
+              <div>
+                <span>Office</span>
+                <h3>Pens, notebooks, lanyards, portfolios</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Technology.html">
+              <div>
+                <span>Tech</span>
+                <h3>Speakers, earbuds, USB drives, mobile gear</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Personal-Care-Beauty.html">
+              <div>
+                <span>Wellness</span>
+                <h3>Personal care, beauty, PPE, eco-aware gifts</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Tradeshow-Signage.html">
+              <div>
+                <span>Events</span>
+                <h3>Tradeshow, signage, lanyards, giveaways</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+            <a class="category" href="Promotional-Gift-Sets.html">
+              <div>
+                <span>Gift Sets</span>
+                <h3>Curated kits for onboarding and appreciation</h3>
+              </div>
+              <small>Explore category</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="products">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Featured products from the real catalog.</h2>
+          <p>These cards link into the mirrored Levin product pages, so the homepage stays polished while the catalog remains usable.</p>
+        </div>
+        <div class="products-grid">
+          <a class="product" href="product/LVD0146.html">
+            <div class="product-media"><img src="Uploads/623ad25d4eeb84640.jpg" alt="2oz Mini Moscow Mule Mug"></div>
+            <div class="product-body">
+              <span>Drinkware</span>
+              <h3>2oz Mini Moscow Mule Mug</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVH0108.html">
+            <div class="product-media"><img src="Uploads/62302cb9eccc78572.jpg" alt="Customized Golf Towel with Carabiner"></div>
+            <div class="product-body">
+              <span>Outdoor</span>
+              <h3>Customized Golf Towel with Carabiner</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVF0055.html">
+            <div class="product-media"><img src="Uploads/619276f511b216818.jpg" alt="Premium Beach Tote Bag"></div>
+            <div class="product-body">
+              <span>Bags</span>
+              <h3>Premium Beach Tote Bag</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVE0020.html">
+            <div class="product-media"><img src="Uploads/619602acadbb01366.jpg" alt="Soft Cover Notebook"></div>
+            <div class="product-body">
+              <span>Office</span>
+              <h3>Soft Cover Notebook</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVD0108.html">
+            <div class="product-media"><img src="Uploads/619fcabb1a3714296.jpg" alt="Moscow Mule Copper Mugs"></div>
+            <div class="product-body">
+              <span>Drinkware</span>
+              <h3>Moscow Mule Copper Mugs</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVA0210.html">
+            <div class="product-media"><img src="Uploads/619f4b1f8ebe77337.jpg" alt="Silicone Oven Mitts"></div>
+            <div class="product-body">
+              <span>Home</span>
+              <h3>Silicone Oven Mitts</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVB0131.html">
+            <div class="product-media"><img src="Uploads/6222d356280692670.jpg" alt="Natural Stone Whisky Disc"></div>
+            <div class="product-body">
+              <span>Bar & Wine</span>
+              <h3>Natural Stone Whisky Disc</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+          <a class="product" href="product/LVA0003.html">
+            <div class="product-media"><img src="Uploads/619118b1e50293271.jpg" alt="Circular Loofah Body Scrubber"></div>
+            <div class="product-body">
+              <span>Wellness</span>
+              <h3>Circular Loofah Body Scrubber</h3>
+              <small>View product details</small>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section soft" id="kits">
+      <div class="wrap">
+        <div class="split">
+          <div>
+            <p class="eyebrow">Kits & online stores</p>
+            <h2>Make repeat merch programs easier to run.</h2>
+            <p>A stronger promo site separates the brand story from the product catalog, then adds practical buying paths like kits and stores. Levin can use that structure to feel more useful and more premium.</p>
+            <ul class="proof-list">
+              <li><b>1</b><span>Build curated kits for onboarding, holidays, trade shows, and client appreciation.</span></li>
+              <li><b>2</b><span>Use the catalog as a sourcing surface, then route buyers to inquiry, samples, and production.</span></li>
+              <li><b>3</b><span>Keep custom sourcing visible for projects that do not fit an off-the-shelf product page.</span></li>
+            </ul>
+          </div>
+          <div class="kit-board" aria-label="Kit and store product examples">
+            <div class="kit-shot">
+              <img src="Uploads/6180a92297a6f7572.jpg" alt="Levin product kit example">
+            </div>
+            <div class="kit-stack">
+              <div class="kit-mini">
+                <img src="Uploads/619121d3a360c3137.jpg" alt="Reusable silicone ice cube tray">
+                <div>
+                  <h3>Curated Add-ons</h3>
+                  <p>Small items that complete a themed package.</p>
+                </div>
+              </div>
+              <div class="kit-mini">
+                <img src="Uploads/61949f8cbb3152869.jpg" alt="Wooden table top coaster">
+                <div>
+                  <h3>Custom Materials</h3>
+                  <p>Wood, leather, silicone, ceramic, metal, and more.</p>
+                </div>
+              </div>
+              <div class="kit-mini">
+                <img src="Uploads/6192852c6aab43299.jpg" alt="Four cup cardboard drink carrier">
+                <div>
+                  <h3>Packaging Logic</h3>
+                  <p>Products, inserts, packaging, and delivery planned together.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>From idea to approved production.</h2>
+          <p>A clearer service process turns Levin's sourcing strength into a buyer-friendly story.</p>
+        </div>
+        <div class="process">
+          <div class="step">
+            <span>01</span>
+            <h3>Brief</h3>
+            <p>Audience, budget, timeline, event, logo, and product requirements.</p>
+          </div>
+          <div class="step">
+            <span>02</span>
+            <h3>Curate</h3>
+            <p>Catalog options, custom ideas, pricing, samples, and alternatives.</p>
+          </div>
+          <div class="step">
+            <span>03</span>
+            <h3>Prototype</h3>
+            <p>Artwork proof, material selection, imprint location, and approval.</p>
+          </div>
+          <div class="step">
+            <span>04</span>
+            <h3>Produce</h3>
+            <p>Production management, quality control, packing, and documentation.</p>
+          </div>
+          <div class="step">
+            <span>05</span>
+            <h3>Deliver</h3>
+            <p>Shipping coordination, follow-up, and repeat-program support.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="wrap cta-inner">
+        <div>
+          <h2>Have a campaign, event, or employee gift idea?</h2>
+          <p>Send Levin the brief and turn it into a sourced, branded, production-ready merch plan.</p>
+        </div>
+        <a class="btn btn-primary" href="contact-us/index.html">Build Your Brand</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div>
+        <img src="Uploads/60890612afc181437.png" alt="Levin Promos">
+        <p>Levin Promos is a promotional products supplier specialized in factory sourcing and global trading services for customized merchandise programs.</p>
+      </div>
+      <div class="footer-links">
+        <a href="product.html">Products</a>
+        <a href="digital-catalogs.html">Digital Catalogs</a>
+        <a href="our-service.html">Our Service</a>
+        <a href="our-team.html">Our Team</a>
+        <a href="contact-us/index.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
