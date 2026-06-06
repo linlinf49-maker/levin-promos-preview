@@ -159,7 +159,7 @@
     }
 
     .section {
-      padding: 88px 0;
+      padding: 76px 0;
     }
 
     .section.soft {
@@ -282,10 +282,10 @@
 
     .section-head {
       display: grid;
-      grid-template-columns: minmax(0, .78fr) minmax(260px, .42fr);
+      grid-template-columns: minmax(0, .74fr) minmax(220px, .32fr);
       gap: 34px;
       align-items: end;
-      margin-bottom: 36px;
+      margin-bottom: 28px;
     }
 
     .section-head h2 {
@@ -298,7 +298,7 @@
     .section-head p {
       margin-bottom: 0;
       color: var(--muted);
-      font-size: 16px;
+      font-size: 14px;
     }
 
     .service-grid {
@@ -308,11 +308,11 @@
     }
 
     .service {
-      min-height: 330px;
+      min-height: 238px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 26px;
+      padding: 24px;
       overflow: hidden;
       border: 1px solid var(--line);
       background: #fff;
@@ -328,14 +328,14 @@
     }
 
     .service h3 {
-      margin-bottom: 12px;
-      font-size: 27px;
+      margin-bottom: 10px;
+      font-size: 25px;
       line-height: 1.05;
     }
 
     .service p {
       color: var(--muted);
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .service a {
@@ -354,28 +354,28 @@
 
     .catalog-panel {
       display: grid;
-      grid-template-columns: 310px minmax(0, 1fr);
-      gap: 28px;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 18px;
       align-items: start;
     }
 
     .catalog-aside {
       position: sticky;
       top: 96px;
-      padding: 26px;
+      padding: 24px;
       color: #fff;
       background: var(--navy);
     }
 
     .catalog-aside h3 {
-      margin-bottom: 12px;
-      font-size: 28px;
+      margin-bottom: 10px;
+      font-size: 25px;
       line-height: 1.1;
     }
 
     .catalog-aside p {
       color: rgba(255, 255, 255, .74);
-      font-size: 15px;
+      font-size: 14px;
     }
 
     .catalog-search {
@@ -416,10 +416,9 @@
     }
 
     .category {
-      min-height: 172px;
       display: grid;
-      align-content: space-between;
-      padding: 21px;
+      grid-template-rows: 118px auto;
+      overflow: hidden;
       border: 1px solid var(--line);
       background: #fff;
       transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
@@ -433,17 +432,35 @@
       outline: none;
     }
 
+    .category-media {
+      display: grid;
+      place-items: center;
+      padding: 14px;
+      background: #f7f9fb;
+    }
+
+    .category-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      mix-blend-mode: multiply;
+    }
+
+    .category-body {
+      padding: 16px;
+    }
+
     .category span {
       color: var(--muted);
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: .08em;
     }
 
     .category h3 {
-      margin: 12px 0 0;
-      font-size: 22px;
+      margin: 6px 0 10px;
+      font-size: 20px;
       line-height: 1.12;
     }
 
@@ -930,41 +947,41 @@
     <section class="section" id="services">
       <div class="wrap">
         <div class="section-head">
-          <h2>All things promo, without the chase.</h2>
-          <p>Lead with clear solutions first, then let the catalog support the buyer journey with fast product discovery.</p>
+          <h2>Promo, simplified.</h2>
+          <p>Four clear ways to start.</p>
         </div>
         <div class="service-grid">
           <article class="service" style="--accent: var(--teal);">
             <div>
               <p class="eyebrow">Merch</p>
-              <h3>Custom branded everything.</h3>
-              <p>From hard goods to apparel, Levin can help find useful products that match the audience, event, budget, and brand standards.</p>
+              <h3>Custom products.</h3>
+              <p>Useful branded goods for events, teams, and campaigns.</p>
             </div>
-            <a href="product.html">Shop products</a>
+            <a href="product.html">Browse</a>
           </article>
           <article class="service" style="--accent: var(--coral);">
             <div>
               <p class="eyebrow">Kitting</p>
-              <h3>Gift sets built to arrive ready.</h3>
-              <p>Combine products, packaging, inserts, and fulfillment into welcome kits, holiday gifts, event boxes, or employee appreciation programs.</p>
+              <h3>Gift sets.</h3>
+              <p>Products, packaging, inserts, and shipping planned together.</p>
             </div>
-            <a href="Promotional-Gift-Sets.html">Explore gift sets</a>
+            <a href="Promotional-Gift-Sets.html">Explore</a>
           </article>
           <article class="service" style="--accent: var(--gold);">
             <div>
               <p class="eyebrow">Catalog</p>
-              <h3>One place for product discovery.</h3>
-              <p>Give buyers a cleaner way to browse categories, spot best-fit items, and move quickly into inquiry or sample requests.</p>
+              <h3>Fast discovery.</h3>
+              <p>Jump by category, use case, or product family.</p>
             </div>
-            <a href="#catalog">Browse categories</a>
+            <a href="#catalog">Open catalog</a>
           </article>
           <article class="service" style="--accent: var(--blue);">
             <div>
               <p class="eyebrow">Sourcing</p>
-              <h3>Global options, practical timelines.</h3>
-              <p>Use Levin's sourcing and quality-control workflow for custom shapes, private label ideas, seasonal campaigns, and repeat programs.</p>
+              <h3>Custom sourcing.</h3>
+              <p>Factory options, quality checks, and practical timelines.</p>
             </div>
-            <a href="our-service.html">View process</a>
+            <a href="our-service.html">Process</a>
           </article>
         </div>
       </div>
@@ -973,81 +990,90 @@
     <section class="section soft" id="catalog">
       <div class="wrap">
         <div class="section-head">
-          <h2>Catalog built for actual buying behavior.</h2>
-          <p>Instead of hiding products inside a flat menu, surface categories by how buyers search: use case, item type, campaign, and urgency.</p>
+          <h2>Shop by category.</h2>
+          <p>Fewer clicks. More visual browsing.</p>
         </div>
         <div class="catalog-panel">
           <aside class="catalog-aside">
-            <h3>Your merch, easier to source.</h3>
-            <p>Search the local mirror or jump into the strongest product families. Each category still links to Levin's existing catalog pages.</p>
+            <h3>Find it fast.</h3>
+            <p>Search or jump straight into a product family.</p>
             <form class="catalog-search" action="search/index.html" method="get">
               <input name="name" type="search" placeholder="Search water bottle, tote, cap...">
-              <button type="submit" aria-label="Search">→</button>
+              <button type="submit" aria-label="Search">Go</button>
             </form>
           </aside>
           <div class="category-grid">
             <a class="category" href="Drinkware.html">
-              <div>
+              <div class="category-media"><img src="Uploads/623ad25d4eeb84640.jpg" alt="Drinkware"></div>
+              <div class="category-body">
                 <span>Drinkware</span>
-                <h3>Mugs, bottles, glassware, straws</h3>
+                <h3>Mugs & bottles</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Bags-Totes.html">
-              <div>
+              <div class="category-media"><img src="Uploads/619276f511b216818.jpg" alt="Bags and totes"></div>
+              <div class="category-body">
                 <span>Bags</span>
-                <h3>Totes, backpacks, lunch bags, drawstrings</h3>
+                <h3>Totes & packs</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Apparel-Accessories.html">
-              <div>
+              <div class="category-media"><img src="Uploads/619308e64db3d9643.jpg" alt="Apparel accessories"></div>
+              <div class="category-body">
                 <span>Apparel</span>
-                <h3>T-shirts, hoodies, hats, gloves, accessories</h3>
+                <h3>Wearables</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Outdoor-Sports.html">
-              <div>
+              <div class="category-media"><img src="Uploads/62302cb9eccc78572.jpg" alt="Outdoor and sports"></div>
+              <div class="category-body">
                 <span>Outdoor</span>
-                <h3>Golf, camping, umbrellas, coolers, fitness</h3>
+                <h3>Golf & leisure</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Office-Suppliers.html">
-              <div>
+              <div class="category-media"><img src="Uploads/619602acadbb01366.jpg" alt="Office supplies"></div>
+              <div class="category-body">
                 <span>Office</span>
-                <h3>Pens, notebooks, lanyards, portfolios</h3>
+                <h3>Desk goods</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Technology.html">
-              <div>
+              <div class="category-media"><img src="Uploads/6185ef03a2c9a6154.jpg" alt="Technology products"></div>
+              <div class="category-body">
                 <span>Tech</span>
-                <h3>Speakers, earbuds, USB drives, mobile gear</h3>
+                <h3>Gadgets</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Personal-Care-Beauty.html">
-              <div>
+              <div class="category-media"><img src="Uploads/619118b1e50293271.jpg" alt="Wellness products"></div>
+              <div class="category-body">
                 <span>Wellness</span>
-                <h3>Personal care, beauty, PPE, eco-aware gifts</h3>
+                <h3>Care items</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Tradeshow-Signage.html">
-              <div>
+              <div class="category-media"><img src="Uploads/6192852c6aab43299.jpg" alt="Event products"></div>
+              <div class="category-body">
                 <span>Events</span>
-                <h3>Tradeshow, signage, lanyards, giveaways</h3>
+                <h3>Event gear</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
             <a class="category" href="Promotional-Gift-Sets.html">
-              <div>
+              <div class="category-media"><img src="Uploads/6180a92297a6f7572.jpg" alt="Gift sets"></div>
+              <div class="category-body">
                 <span>Gift Sets</span>
-                <h3>Curated kits for onboarding and appreciation</h3>
+                <h3>Kits</h3>
+                <small>Explore</small>
               </div>
-              <small>Explore category</small>
             </a>
           </div>
         </div>
