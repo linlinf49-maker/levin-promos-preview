@@ -52,7 +52,7 @@ const TEXT = {
   noMoq: "\u89c1\u62a5\u4ef7\u5355"
 };
 
-const state = { query: "", mainFilter: TEXT.all, subFilter: TEXT.all, layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
+const state = { query: "", mainFilter: TEXT.all, subFilter: TEXT.all, hoverMain: null, layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
 const grid = document.querySelector("#productGrid");
 const resultCount = document.querySelector("#resultCount");
 const emptyState = document.querySelector("#emptyState");
@@ -98,27 +98,33 @@ function getCategoryTree() {
     .filter((node) => node.count > 0);
 }
 
-function activeMainNode() {
-  return getCategoryTree().find((node) => node.id === state.mainFilter);
+function activeMainNode(id = state.mainFilter) {
+  return getCategoryTree().find((node) => node.id === id);
+}
+
+function previewMainNode() {
+  const previewId = state.hoverMain || (state.mainFilter !== TEXT.all ? state.mainFilter : "");
+  return previewId ? activeMainNode(previewId) : null;
 }
 
 function renderFilterChips() {
   const tree = getCategoryTree();
-  const mainNode = activeMainNode();
+  const mainNode = previewMainNode();
   const allActive = state.mainFilter === TEXT.all;
+  const previewing = mainNode && state.hoverMain && state.hoverMain !== state.mainFilter;
   const mainButtons = [
     `<button class="filter-chip ${allActive ? "is-active" : ""}" type="button" data-filter-all="true">${TEXT.all}\u4ea7\u54c1<span class="chip-count">${products.length.toLocaleString()}</span></button>`,
     ...tree.map((node) => `
-      <button class="filter-chip ${state.mainFilter === node.id ? "is-active" : ""}" type="button" data-main="${escapeHtml(node.id)}">
+      <button class="filter-chip ${state.mainFilter === node.id ? "is-active" : ""} ${state.hoverMain === node.id && state.mainFilter !== node.id ? "is-preview" : ""}" type="button" data-main="${escapeHtml(node.id)}" aria-expanded="${mainNode?.id === node.id ? "true" : "false"}">
         ${escapeHtml(node.label)}
         <span class="chip-count">${Number(node.count || 0).toLocaleString()}</span>
       </button>`)
   ].join("");
 
   const subButtons = mainNode ? [
-    `<button class="filter-chip is-sub ${state.subFilter === TEXT.all ? "is-active" : ""}" type="button" data-sub="${TEXT.all}">\u5168\u90e8${escapeHtml(mainNode.label)}<span class="chip-count">${Number(mainNode.count || 0).toLocaleString()}</span></button>`,
+    `<button class="filter-chip is-sub ${state.mainFilter === mainNode.id && state.subFilter === TEXT.all ? "is-active" : ""}" type="button" data-sub="${TEXT.all}" data-parent-main="${escapeHtml(mainNode.id)}">\u5168\u90e8${escapeHtml(mainNode.label)}<span class="chip-count">${Number(mainNode.count || 0).toLocaleString()}</span></button>`,
     ...(mainNode.children || []).map((child) => `
-      <button class="filter-chip is-sub ${state.subFilter === child.id ? "is-active" : ""}" type="button" data-sub="${escapeHtml(child.id)}">
+      <button class="filter-chip is-sub ${state.mainFilter === mainNode.id && state.subFilter === child.id ? "is-active" : ""}" type="button" data-sub="${escapeHtml(child.id)}" data-parent-main="${escapeHtml(mainNode.id)}">
         ${escapeHtml(child.label)}
         <span class="chip-count">${Number(child.count || 0).toLocaleString()}</span>
       </button>`)
@@ -126,7 +132,7 @@ function renderFilterChips() {
 
   filterChips.innerHTML = `
     <div class="category-row main-category-row">${mainButtons}</div>
-    <div class="category-row sub-category-row ${mainNode ? "has-subcategories" : ""}">${subButtons}</div>
+    <div class="category-row sub-category-row ${mainNode ? "has-subcategories" : ""} ${previewing ? "is-previewing" : ""}">${subButtons}</div>
   `;
 }
 
@@ -328,16 +334,52 @@ filterChips.addEventListener("click", (event) => {
   if (allButton) {
     state.mainFilter = TEXT.all;
     state.subFilter = TEXT.all;
+    state.hoverMain = null;
   } else if (mainButton) {
     state.mainFilter = mainButton.dataset.main;
     state.subFilter = TEXT.all;
+    state.hoverMain = state.mainFilter;
   } else if (subButton) {
+    state.mainFilter = subButton.dataset.parentMain || state.mainFilter;
     state.subFilter = subButton.dataset.sub;
+    state.hoverMain = state.mainFilter;
   } else {
     return;
   }
   renderFilterChips();
   renderProducts();
+});
+
+filterChips.addEventListener("pointerover", (event) => {
+  const mainButton = event.target.closest("[data-main]");
+  const allButton = event.target.closest("[data-filter-all]");
+  const nextHover = mainButton ? mainButton.dataset.main : (allButton ? null : state.hoverMain);
+  if (nextHover !== state.hoverMain) {
+    state.hoverMain = nextHover;
+    renderFilterChips();
+  }
+});
+
+filterChips.addEventListener("pointerleave", () => {
+  if (state.hoverMain) {
+    state.hoverMain = null;
+    renderFilterChips();
+  }
+});
+
+filterChips.addEventListener("focusin", (event) => {
+  const mainButton = event.target.closest("[data-main]");
+  if (mainButton && mainButton.dataset.main !== state.hoverMain) {
+    state.hoverMain = mainButton.dataset.main;
+    renderFilterChips();
+  }
+});
+
+filterChips.addEventListener("focusout", (event) => {
+  if (!filterChips.contains(event.relatedTarget) && state.hoverMain) {
+    state.hoverMain = null;
+    renderFilterChips();
+  }
 });
 
 document.querySelectorAll("[data-layout]").forEach((button) => button.addEventListener("click", () => {
@@ -348,7 +390,7 @@ document.querySelectorAll("[data-layout]").forEach((button) => button.addEventLi
 
 searchInput.addEventListener("input", () => { state.query = searchInput.value; renderProducts(); });
 document.querySelector("#sortSelect").addEventListener("change", (event) => { state.sort = event.target.value; renderProducts(); });
-document.querySelector("#clearSearch").addEventListener("click", () => { searchInput.value = ""; state.query = ""; state.mainFilter = TEXT.all; state.subFilter = TEXT.all; renderFilterChips(); renderProducts(); searchInput.focus(); });
+document.querySelector("#clearSearch").addEventListener("click", () => { searchInput.value = ""; state.query = ""; state.mainFilter = TEXT.all; state.subFilter = TEXT.all; state.hoverMain = null; renderFilterChips(); renderProducts(); searchInput.focus(); });
 document.querySelector("#collectionButton").addEventListener("click", openCollection);
 document.querySelector("#closeCollection").addEventListener("click", closePanels);
 document.querySelector("#closeDetail").addEventListener("click", closePanels);
