@@ -1,5 +1,24 @@
 const libraryPayload = window.LEVIN_PRODUCTS || { products: [], sourceImageCount: 0, quoteSkuCount: 0 };
 const products = Array.isArray(libraryPayload.products) ? libraryPayload.products : [];
+const categoryMeta = Array.isArray(libraryPayload.categories) ? libraryPayload.categories : [];
+
+const FALLBACK_CATEGORIES = [
+  { id: "Drinkware", label: "\u996e\u5177\u9152\u5177" },
+  { id: "KitchenDining", label: "\u9910\u53a8\u7528\u54c1" },
+  { id: "BagsTravel", label: "\u7bb1\u5305\u51fa\u884c" },
+  { id: "Apparel", label: "\u670d\u9970\u914d\u4ef6" },
+  { id: "BeautyWellness", label: "\u7f8e\u5986\u4e2a\u62a4" },
+  { id: "HomeLiving", label: "\u5bb6\u5c45\u751f\u6d3b" },
+  { id: "TechOffice", label: "\u79d1\u6280\u529e\u516c" },
+  { id: "ToolsAuto", label: "\u5de5\u5177\u8f66\u8f7d" },
+  { id: "OutdoorSports", label: "\u6237\u5916\u8fd0\u52a8" },
+  { id: "EventsParty", label: "\u6d3b\u52a8\u8282\u5e86" },
+  { id: "DisplayPackaging", label: "\u5c55\u793a\u5305\u88c5" },
+  { id: "ToysGames", label: "\u73a9\u5177\u6e38\u620f" },
+  { id: "BadgesKeychains", label: "\u5fbd\u7ae0\u6302\u4ef6" },
+  { id: "Pets", label: "\u5ba0\u7269\u7528\u54c1" },
+  { id: "Other", label: "\u5176\u4ed6\u793c\u54c1" }
+];
 
 const TEXT = {
   all: "\u5168\u90e8",
@@ -39,6 +58,7 @@ const grid = document.querySelector("#productGrid");
 const resultCount = document.querySelector("#resultCount");
 const emptyState = document.querySelector("#emptyState");
 const searchInput = document.querySelector("#searchInput");
+const filterChips = document.querySelector("#filterChips");
 const detailPanel = document.querySelector("#detailPanel");
 const detailContent = document.querySelector("#detailContent");
 const collectionDrawer = document.querySelector("#collectionDrawer");
@@ -48,6 +68,39 @@ let toastTimer;
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+}
+
+function getFilterCategories() {
+  const counts = new Map();
+  products.forEach((product) => counts.set(product.category, (counts.get(product.category) || 0) + 1));
+  const source = categoryMeta.length ? categoryMeta : FALLBACK_CATEGORIES;
+  const seen = new Set();
+  const ordered = source
+    .map((category) => {
+      seen.add(category.id);
+      return { id: category.id, label: category.label, count: counts.get(category.id) || category.count || 0 };
+    })
+    .filter((category) => category.id && category.count > 0);
+
+  counts.forEach((count, id) => {
+    if (!seen.has(id) && count > 0) {
+      const product = products.find((item) => item.category === id);
+      ordered.push({ id, label: product?.categoryLabel || id, count });
+    }
+  });
+  return ordered;
+}
+
+function renderFilterChips() {
+  const chips = [
+    `<button class="filter-chip is-active" type="button" data-filter="${TEXT.all}">${TEXT.all}\u4ea7\u54c1<span class="chip-count">${products.length.toLocaleString()}</span></button>`,
+    ...getFilterCategories().map((category) => `
+      <button class="filter-chip" type="button" data-filter="${escapeHtml(category.id)}">
+        ${escapeHtml(category.label)}
+        <span class="chip-count">${category.count.toLocaleString()}</span>
+      </button>`)
+  ];
+  filterChips.innerHTML = chips.join("");
 }
 
 function formatMoq(product) {
@@ -79,7 +132,7 @@ function productCard(product) {
   const tags = (product.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
   return `
     <article class="product-card" data-sku="${escapeHtml(product.sku)}">
-      <button class="product-card-main" type="button" data-open="${escapeHtml(product.sku)}" aria-label="?? ${escapeHtml(product.name)} ??">
+      <button class="product-card-main" type="button" data-open="${escapeHtml(product.sku)}" aria-label="查看 ${escapeHtml(product.name)} 详情">
         <div class="image-stage">
           <span class="sku-badge">${escapeHtml(product.sku)}</span>
           <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" />
@@ -116,12 +169,12 @@ function detailTemplate(product) {
       <div class="detail-hero-copy">
         <span class="detail-sku">${escapeHtml(product.sku)}</span>
         <h2>${escapeHtml(product.name)}</h2>
-        <p class="detail-category">${escapeHtml(product.categoryLabel)} ? ${TEXT.approved}</p>
+        <p class="detail-category">${escapeHtml(product.categoryLabel)} · ${TEXT.approved}</p>
         <div class="detail-facts">
           <div><span>MOQ</span><strong>${formatMoq(product)}</strong></div>
-          <div><span>???</span><strong>${escapeHtml(product.owner || "?")}</strong></div>
-          <div><span>????</span><strong>v${escapeHtml(product.updated)}</strong></div>
-          <div><span>????</span><strong>${imageCount.toLocaleString()} ${TEXT.imageAvailable}</strong></div>
+          <div><span>负责人</span><strong>${escapeHtml(product.owner || "?")}</strong></div>
+          <div><span>报价版本</span><strong>v${escapeHtml(product.updated)}</strong></div>
+          <div><span>图片素材</span><strong>${imageCount.toLocaleString()} ${TEXT.imageAvailable}</strong></div>
         </div>
         <div class="detail-actions">
           <button class="primary-button" type="button" data-detail-add="${escapeHtml(product.sku)}">${state.selected.has(product.sku) ? TEXT.addedCollection : TEXT.addCollection}</button>
@@ -131,7 +184,7 @@ function detailTemplate(product) {
     </section>
     <section class="detail-section">
       <h3>${TEXT.productInfo}</h3>
-      <p>${escapeHtml(product.name)}?${TEXT.approved}??????????????????????????????</p>
+      <p>${escapeHtml(product.name)} 已通过审核入库，可用于选品、Catalog 和营销素材调用。</p>
       <dl class="spec-table">
         <dt>${TEXT.material}</dt><dd>${escapeHtml(product.material || TEXT.quoteDetail)}</dd>
         <dt>${TEXT.itemSize}</dt><dd>${TEXT.quoteDetail}</dd>
@@ -151,13 +204,13 @@ function detailTemplate(product) {
       <div class="version-history">
         <div class="version-row">
           <span class="version-dot is-current" aria-hidden="true"></span>
-          <strong>v${escapeHtml(product.updated)}</strong><span>${escapeHtml(product.updated)}</span><span>${escapeHtml(product.quote)}</span><em>??</em>
+          <strong>v${escapeHtml(product.updated)}</strong><span>${escapeHtml(product.updated)}</span><span>${escapeHtml(product.quote)}</span><em>当前</em>
         </div>
       </div>
     </section>
     <section class="detail-section">
       <h3>${TEXT.assets}</h3>
-      <div class="detail-gallery"><img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)} ?? 1" /></div>
+      <div class="detail-gallery"><img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)} 素材 1" /></div>
     </section>
     <section class="detail-section">
       <h3>${TEXT.quote}</h3>
@@ -205,8 +258,8 @@ function renderCollection() {
   document.querySelector("#drawerList").innerHTML = chosen.map((product) => `
     <article class="drawer-item">
       <img src="${escapeHtml(product.image)}" alt="" />
-      <div><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.sku)} ? MOQ ${formatMoq(product)} ? ?? v${escapeHtml(product.updated)}</small></div>
-      <button class="remove-button" type="button" data-remove="${escapeHtml(product.sku)}" aria-label="?????? ${escapeHtml(product.name)}">?</button>
+      <div><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.sku)} · MOQ ${formatMoq(product)} · 报价 v${escapeHtml(product.updated)}</small></div>
+      <button class="remove-button" type="button" data-remove="${escapeHtml(product.sku)}" aria-label="从选品集移除 ${escapeHtml(product.name)}">×</button>
     </article>`).join("");
 }
 
@@ -240,7 +293,7 @@ grid.addEventListener("click", (event) => {
   else if (open) openDetail(open.dataset.open);
 });
 
-document.querySelector("#filterChips").addEventListener("click", (event) => {
+filterChips.addEventListener("click", (event) => {
   const button = event.target.closest("[data-filter]");
   if (!button) return;
   state.filter = button.dataset.filter;
@@ -292,5 +345,6 @@ document.addEventListener("keydown", (event) => {
   if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); searchInput.focus(); }
 });
 
+renderFilterChips();
 renderProducts();
 renderCollection();
