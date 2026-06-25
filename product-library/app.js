@@ -3,20 +3,20 @@ const products = Array.isArray(libraryPayload.products) ? libraryPayload.product
 const categoryTreeMeta = Array.isArray(libraryPayload.categoryTree) ? libraryPayload.categoryTree : [];
 
 const FALLBACK_CATEGORY_TREE = [
-  { id: "A_HOME", label: "A\u5c45\u5bb6\u65e5\u7528", children: [] },
-  { id: "B_DRINKWARE", label: "B\u996e\u5177\u9152\u5177", children: [] },
-  { id: "C_OUTDOOR_TRAVEL", label: "C\u6237\u5916\u548c\u65c5\u884c", children: [] },
-  { id: "D_KITCHEN", label: "D\u9910\u53a8\u7528\u54c1", children: [] },
-  { id: "E_BAGS_PACKAGING", label: "E\u7bb1\u5305\u5305\u88c5", children: [] },
-  { id: "F_EVENTS_DISPLAY", label: "F\u6d3b\u52a8\u5c55\u793a", children: [] },
-  { id: "G_TOYS_GAMES", label: "G\u73a9\u5177\u6e38\u620f", children: [] },
-  { id: "H_APPAREL_TOWELS", label: "H\u8863\u5e3d\u889c\u6bdb\u5dfe", children: [] },
-  { id: "I_ELECTRONICS", label: "I3C\u7535\u5b50", children: [] },
-  { id: "J_OFFICE", label: "J\u6587\u5177\u529e\u516c", children: [] },
-  { id: "K_BEAUTY_WELLNESS", label: "K\u7f8e\u5986\u4e2a\u62a4", children: [] },
-  { id: "L_KEYCHAIN_BADGE", label: "L\u94a5\u5319\u6263\u5fbd\u7ae0", children: [] },
-  { id: "M_TOOLS_AUTO", label: "M\u5de5\u5177\u8f66\u8f7d", children: [] },
-  { id: "N_OTHER", label: "N\u5176\u4ed6\u793c\u54c1", children: [] }
+  { id: "A_HOME", label: "\u5c45\u5bb6\u65e5\u7528", children: [] },
+  { id: "B_DRINKWARE", label: "\u996e\u5177\u9152\u5177", children: [] },
+  { id: "C_OUTDOOR_TRAVEL", label: "\u6237\u5916\u65c5\u884c", children: [] },
+  { id: "D_KITCHEN", label: "\u9910\u53a8\u7528\u54c1", children: [] },
+  { id: "E_BAGS_PACKAGING", label: "\u7bb1\u5305\u5305\u88c5", children: [] },
+  { id: "F_EVENTS_DISPLAY", label: "\u6d3b\u52a8\u5c55\u793a", children: [] },
+  { id: "G_TOYS_GAMES", label: "\u73a9\u5177\u6e38\u620f", children: [] },
+  { id: "H_APPAREL_TOWELS", label: "\u8863\u5e3d\u889c\u6bdb\u5dfe", children: [] },
+  { id: "I_ELECTRONICS", label: "3C\u7535\u5b50", children: [] },
+  { id: "J_OFFICE", label: "\u6587\u5177\u529e\u516c", children: [] },
+  { id: "K_BEAUTY_WELLNESS", label: "\u7f8e\u5986\u4e2a\u62a4", children: [] },
+  { id: "L_KEYCHAIN_BADGE", label: "\u94a5\u5319\u6263\u5fbd\u7ae0", children: [] },
+  { id: "M_TOOLS_AUTO", label: "\u5de5\u5177\u8f66\u8f7d", children: [] },
+  { id: "N_OTHER", label: "\u5176\u4ed6\u793c\u54c1", children: [] }
 ];
 
 const TEXT = {
