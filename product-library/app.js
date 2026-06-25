@@ -19,6 +19,8 @@ const FALLBACK_CATEGORY_TREE = [
   { id: "N_OTHER", label: "\u5176\u4ed6\u793c\u54c1", children: [] }
 ];
 
+const QUOTE_LIBRARY_ROOT = "D:\\\u6587\u4ef6\\Lin\\LEVIN\\\u793c\u5f80 - Marketing\u4ea7\u54c1\u5e93\\1. \u5907\u5e95\u62a5\u4ef7\u5355\u5e93";
+
 const TEXT = {
   all: "\u5168\u90e8",
   productUnit: "\u4e2a\u4ea7\u54c1",
@@ -37,13 +39,17 @@ const TEXT = {
   tags: "Marketing \u6807\u7b7e",
   assets: "\u56fe\u7247\u7d20\u6750",
   quote: "\u5907\u5e95\u62a5\u4ef7",
-  callQuote: "\u8c03\u7528\u5907\u5e95\u62a5\u4ef7",
+  callQuote: "\u590d\u5236\u672c\u5730\u8def\u5f84",
+  quoteFileName: "\u62a5\u4ef7\u5355\u6587\u4ef6",
+  quotePathNote: "\u516c\u5f00\u7f51\u9875\u4e0d\u80fd\u76f4\u63a5\u6253\u5f00\u7535\u8111 D \u76d8 Excel\uff0c\u70b9\u51fb\u540e\u4f1a\u590d\u5236\u5b8c\u6574\u672c\u5730\u8def\u5f84\uff0c\u8bf7\u7c98\u8d34\u5230\u6587\u4ef6\u8d44\u6e90\u7ba1\u7406\u5668\u5730\u5740\u680f\u6253\u5f00\u3002",
   priceVersion: "\u4ef7\u683c\u4e0e\u7248\u672c",
   priceNote: "\u4ef7\u683c\u4fe1\u606f\u4e0d\u5728\u516c\u5f00\u9875\u9762\u5c55\u793a\uff0c\u4ee5\u5bf9\u5e94\u5907\u5e95\u62a5\u4ef7\u5355\u4e3a\u51c6\u3002",
   currentQuote: "\u5f53\u524d\u62a5\u4ef7",
   imageAvailable: "\u5f20\u7d20\u6750\u53ef\u7528",
   copied: "\u4ea7\u54c1\u8d44\u6599\u5df2\u590d\u5236",
   prepared: "\u4ea7\u54c1\u8d44\u6599\u5df2\u51c6\u5907\u597d",
+  quotePathCopied: "\u5907\u5e95\u62a5\u4ef7\u5355\u8def\u5f84\u5df2\u590d\u5236\uff0c\u8bf7\u5728\u6587\u4ef6\u8d44\u6e90\u7ba1\u7406\u5668\u5730\u5740\u680f\u7c98\u8d34\u6253\u5f00",
+  quotePathPrepared: "\u5df2\u51c6\u5907\u5907\u5e95\u62a5\u4ef7\u5355\u8def\u5f84\uff0c\u8bf7\u624b\u52a8\u590d\u5236",
   syncDone: "\u5df2\u540c\u6b65\uff1a821 \u4e2a\u4ea7\u54c1\u5df2\u63a5\u5165\u4ea7\u54c1\u5e93",
   future: "\u5c06\u5728\u4e0b\u4e00\u9636\u6bb5\u63a5\u5165",
   quoteReady: "\u7684\u5907\u5e95\u62a5\u4ef7\u8def\u5f84\u5df2\u51c6\u5907\u8c03\u7528",
@@ -79,6 +85,31 @@ function productSubCategory(product) {
 
 function productCategoryPath(product) {
   return product.categoryPathLabel || [product.mainCategoryLabel || product.categoryLabel, product.subCategoryLabel].filter(Boolean).join(" / ");
+}
+
+function quoteLocalPath(product) {
+  return product.quotePath || `${QUOTE_LIBRARY_ROOT}\\${product.quote || ""}`;
+}
+
+async function copyTextToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const field = document.createElement("textarea");
+    field.value = text;
+    field.setAttribute("readonly", "");
+    field.style.position = "fixed";
+    field.style.left = "-9999px";
+    field.style.top = "0";
+    document.body.appendChild(field);
+    field.select();
+    let copied = false;
+    try { copied = document.execCommand("copy"); }
+    catch { copied = false; }
+    field.remove();
+    return copied;
+  }
 }
 
 function getCategoryTree() {
@@ -261,7 +292,10 @@ function detailTemplate(product) {
     </section>
     <section class="detail-section">
       <h3>${TEXT.quote}</h3>
-      <p>${escapeHtml(product.quote)}</p>
+      <p class="quote-file-label">${TEXT.quoteFileName}</p>
+      <p class="quote-file-name">${escapeHtml(product.quote)}</p>
+      <p class="quote-path-note">${TEXT.quotePathNote}</p>
+      <code class="quote-path-line">${escapeHtml(quoteLocalPath(product))}</code>
       <button class="secondary-button" type="button" data-quote="${escapeHtml(product.sku)}" style="margin-top:12px">${TEXT.callQuote}</button>
     </section>`;
 }
@@ -329,8 +363,20 @@ function showToast(message) {
 
 async function copyProduct(product) {
   const text = `${product.sku} | ${product.name}\nCategory: ${productCategoryPath(product)}\nMaterial: ${product.material}\nQuote: ${product.quote}`;
-  try { await navigator.clipboard.writeText(text); showToast(TEXT.copied); }
-  catch { showToast(TEXT.prepared); }
+  const copied = await copyTextToClipboard(text);
+  showToast(copied ? TEXT.copied : TEXT.prepared);
+}
+
+async function copyQuotePath(product) {
+  if (!product) return;
+  const path = quoteLocalPath(product);
+  const copied = await copyTextToClipboard(path);
+  if (copied) {
+    showToast(TEXT.quotePathCopied);
+  } else {
+    window.prompt(TEXT.quotePathPrepared, path);
+    showToast(TEXT.quotePathPrepared);
+  }
 }
 
 grid.addEventListener("click", (event) => {
@@ -416,7 +462,7 @@ detailContent.addEventListener("click", (event) => {
   const quote = event.target.closest("[data-quote]");
   if (add) toggleSelected(add.dataset.detailAdd);
   if (copy) copyProduct(products.find((item) => item.sku === copy.dataset.copy));
-  if (quote) showToast(`${quote.dataset.quote} ${TEXT.quoteReady}`);
+  if (quote) copyQuotePath(products.find((item) => item.sku === quote.dataset.quote));
 });
 
 document.querySelector("#createCatalog").addEventListener("click", () => showToast(`${TEXT.catalogLockedPrefix}${state.selected.size}${TEXT.catalogLockedSuffix}`));
