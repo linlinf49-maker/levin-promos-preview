@@ -1,68 +1,40 @@
-const products = [
-  {
-    sku: "LVA0446", name: "Sports Socks", category: "Bags", categoryLabel: "服饰", image: "./assets/products/LVA0446.jpg",
-    owner: "Becky", updated: "2025.12", moq: 500, material: "Polyester blend", tags: ["Sports", "Apparel"],
-    quote: "LVA0446-Sports Socks-Becky-2025.12.xlsx"
-  },
-  {
-    sku: "LVB0001", name: "Champagne Stopper", category: "Drinkware", categoryLabel: "饮具酒具", image: "./assets/products/LVB0001.jpg",
-    owner: "Edward", updated: "2025.12", moq: 300, material: "Stainless Steel / ABS / Silicone", tags: ["Wine", "Custom color"],
-    quote: "LVB0001-Champagne stopper-Edward-2025.12.xlsx",
-    description: "It is stamped from stainless steel material with a bright surface. The food-grade PP and silicone interior helps preserve the taste of sparkling wine.",
-    imprint: "Silkscreen printing / Laser printing", size: "3.8 × 4 × 5.5 cm", setup: "$50",
-    risk: "丝印存在掉色风险，优先推荐激光；镜面容易出现划痕，装运时需加强保护。",
-    priceBasis: { exchangeRate: "6.90 CNY/USD", freight: "2025.12", reason: "汇率与海运费更新" },
-    priceTiers: [
-      { qty: "300", sea: "$0.70", air: "$1.13" },
-      { qty: "500", sea: "$0.61", air: "$0.93" },
-      { qty: "1,000", sea: "$0.59", air: "$0.92" },
-      { qty: "5,000", sea: "$0.57", air: "$0.89" }
-    ],
-    priceHistory: [
-      { version: "2025.12", date: "2025-12-17", reason: "汇率与海运费更新", current: true },
-      { version: "2025.09", date: "2025-09-08", reason: "供应商阶梯价调整", current: false }
-    ],
-    gallery: ["./assets/products/LVB0001-scene-1.jpg", "./assets/products/LVB0001-scene-2.jpg", "./assets/products/LVB0001-scene-3.jpg", "./assets/products/LVB0001-box.jpg"]
-  },
-  {
-    sku: "LVC0120", name: "Neoprene Single Bottle Sleeve Cooler", category: "Bags", categoryLabel: "箱包冷藏", image: "./assets/products/LVC0120.jpg",
-    owner: "Fay", updated: "2026.01", moq: 500, material: "Neoprene", tags: ["Wine", "Outdoor"], quote: "LVC0120-Neoprene Single Bottle Sleeve Cooler-Fay-2026.01.xlsx"
-  },
-  {
-    sku: "LVD0080", name: "16oz Reusable Plastic Solo Cup", category: "Drinkware", categoryLabel: "饮具酒具", image: "./assets/products/LVD0080.jpg",
-    owner: "Fay", updated: "2026.01", moq: 1000, material: "Reusable Plastic", tags: ["Party", "Reusable"], quote: "LVD0080-16oz Reusable Plastic Solo Cup-Fay-2026.01.xlsx"
-  },
-  {
-    sku: "LVE0147", name: "Invisible UV Pen with Light", category: "Tech", categoryLabel: "科技办公", image: "./assets/products/LVE0147.jpg",
-    owner: "Miya", updated: "2026.03", moq: 500, material: "ABS", tags: ["Novelty", "Education"], quote: "LVE0147-Invisible UV Pen with Light-Miya-20260303.xlsx"
-  },
-  {
-    sku: "LVF0214", name: "Fanny Pack", category: "Bags", categoryLabel: "箱包服饰", image: "./assets/products/LVF0214.jpg",
-    owner: "Devin", updated: "2026.01", moq: 500, material: "Polyester", tags: ["Outdoor", "Travel"], quote: "LVF0214-Fannypack-Devin-2026.01.xlsx"
-  },
-  {
-    sku: "LVG0136", name: "Cheese Knife Set", category: "Kitchen", categoryLabel: "厨房家居", image: "./assets/products/LVG0136.jpg",
-    owner: "Fay", updated: "2026.01", moq: 300, material: "Stainless Steel", tags: ["Wine", "Executive Gift"], quote: "LVG0136-Cheese knives,Cheese Tools-Fay-2026.01.xlsx"
-  },
-  {
-    sku: "LVH0056", name: "Disposable Slippers", category: "Kitchen", categoryLabel: "旅行家居", image: "./assets/products/LVH0056.jpg",
-    owner: "Fay", updated: "2026.01", moq: 1000, material: "Non-woven Fabric", tags: ["Hotel", "Wellness"], quote: "LVH0056-Disposable Slippers-Fay-2026.01.xlsx"
-  },
-  {
-    sku: "LVI0077", name: "LED Flashlight Keychain", category: "Tech", categoryLabel: "科技办公", image: "./assets/products/LVI0077.jpg",
-    owner: "Miya", updated: "2026.03", moq: 500, material: "ABS / LED", tags: ["Keychain", "Utility"], quote: "LVI0077-LED Flashlight Keychain-Miya-20260319.xlsx"
-  },
-  {
-    sku: "LVJ0141", name: "Poker Table", category: "Events", categoryLabel: "活动娱乐", image: "./assets/products/LVJ0141.png",
-    owner: "Edward", updated: "2026.03", moq: 50, material: "Wood / Felt", tags: ["Casino", "Event"], quote: "LVJ0141-Poker table-Edward-2026.3.xlsx"
-  },
-  {
-    sku: "LVK0065", name: "Round Keychain", category: "Tech", categoryLabel: "钥匙扣", image: "./assets/products/LVK0065.jpg",
-    owner: "Catherine", updated: "2026.01", moq: 500, material: "Metal", tags: ["Keychain", "Classic"], quote: "LVK0065 - Round Keychain - Catherine 2026.01.xlsx"
-  }
-];
+const libraryPayload = window.LEVIN_PRODUCTS || { products: [], sourceImageCount: 0, quoteSkuCount: 0 };
+const products = Array.isArray(libraryPayload.products) ? libraryPayload.products : [];
 
-const state = { query: "", filter: "全部", layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
+const TEXT = {
+  all: "\u5168\u90e8",
+  productUnit: "\u4e2a\u4ea7\u54c1",
+  quoteDetail: "\u8be6\u89c1\u5907\u5e95\u62a5\u4ef7\u5355",
+  approved: "\u5df2\u5ba1\u6838\u5165\u5e93",
+  selected: "\u5df2\u52a0\u5165",
+  select: "+ \u9009\u54c1",
+  addCollection: "\u52a0\u5165\u9009\u54c1\u96c6",
+  addedCollection: "\u5df2\u52a0\u5165\u9009\u54c1\u96c6",
+  copy: "\u590d\u5236\u4ea7\u54c1\u8d44\u6599",
+  material: "\u6750\u8d28",
+  itemSize: "\u5c3a\u5bf8",
+  imprint: "\u5370\u5237\u65b9\u5f0f",
+  setup: "\u5f00\u7248\u8d39",
+  productInfo: "\u4ea7\u54c1\u8d44\u6599",
+  tags: "Marketing \u6807\u7b7e",
+  assets: "\u56fe\u7247\u7d20\u6750",
+  quote: "\u5907\u5e95\u62a5\u4ef7",
+  callQuote: "\u8c03\u7528\u5907\u5e95\u62a5\u4ef7",
+  priceVersion: "\u4ef7\u683c\u4e0e\u7248\u672c",
+  priceNote: "\u4ef7\u683c\u4fe1\u606f\u4e0d\u5728\u516c\u5f00\u9875\u9762\u5c55\u793a\uff0c\u4ee5\u5bf9\u5e94\u5907\u5e95\u62a5\u4ef7\u5355\u4e3a\u51c6\u3002",
+  currentQuote: "\u5f53\u524d\u62a5\u4ef7",
+  imageAvailable: "\u5f20\u7d20\u6750\u53ef\u7528",
+  copied: "\u4ea7\u54c1\u8d44\u6599\u5df2\u590d\u5236",
+  prepared: "\u4ea7\u54c1\u8d44\u6599\u5df2\u51c6\u5907\u597d",
+  syncDone: "\u5df2\u540c\u6b65\uff1a821 \u4e2a\u4ea7\u54c1\u5df2\u63a5\u5165\u4ea7\u54c1\u5e93",
+  future: "\u5c06\u5728\u4e0b\u4e00\u9636\u6bb5\u63a5\u5165",
+  quoteReady: "\u7684\u5907\u5e95\u62a5\u4ef7\u8def\u5f84\u5df2\u51c6\u5907\u8c03\u7528",
+  catalogLockedPrefix: "\u5df2\u9501\u5b9a ",
+  catalogLockedSuffix: " \u4e2a\u4ea7\u54c1\u7684\u5f53\u524d\u62a5\u4ef7\u7248\u672c",
+  noMoq: "\u89c1\u62a5\u4ef7\u5355"
+};
+
+const state = { query: "", filter: TEXT.all, layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
 const grid = document.querySelector("#productGrid");
 const resultCount = document.querySelector("#resultCount");
 const emptyState = document.querySelector("#emptyState");
@@ -74,14 +46,22 @@ const scrim = document.querySelector("#scrim");
 const toast = document.querySelector("#toast");
 let toastTimer;
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+}
+
+function formatMoq(product) {
+  return product.moq ? product.moq.toLocaleString() : TEXT.noMoq;
+}
+
 function normalizedSearchText(product) {
-  return [product.sku, product.name, product.categoryLabel, product.material, product.owner, ...product.tags].join(" ").toLowerCase();
+  return [product.sku, product.name, product.categoryLabel, product.material, product.owner, product.quote, ...(product.tags || [])].join(" ").toLowerCase();
 }
 
 function visibleProducts() {
   const query = state.query.trim().toLowerCase();
   let list = products.filter((product) => {
-    const matchesFilter = state.filter === "全部" || product.category === state.filter;
+    const matchesFilter = state.filter === TEXT.all || product.category === state.filter;
     const matchesQuery = !query || normalizedSearchText(product).includes(query);
     return matchesFilter && matchesQuery;
   });
@@ -89,37 +69,38 @@ function visibleProducts() {
   list = [...list].sort((a, b) => {
     if (state.sort === "sku") return a.sku.localeCompare(b.sku);
     if (state.sort === "name") return a.name.localeCompare(b.name);
-    return b.updated.localeCompare(a.updated);
+    return String(b.updated).localeCompare(String(a.updated)) || a.sku.localeCompare(b.sku);
   });
   return list;
 }
 
 function productCard(product) {
   const added = state.selected.has(product.sku);
+  const tags = (product.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
   return `
-    <article class="product-card" data-sku="${product.sku}">
-      <button class="product-card-main" type="button" data-open="${product.sku}" aria-label="查看 ${product.name} 详情">
+    <article class="product-card" data-sku="${escapeHtml(product.sku)}">
+      <button class="product-card-main" type="button" data-open="${escapeHtml(product.sku)}" aria-label="?? ${escapeHtml(product.name)} ??">
         <div class="image-stage">
-          <span class="sku-badge">${product.sku}</span>
-          <img src="${product.image}" alt="${product.name}" loading="lazy" />
-          <span class="updated-badge">QUOTE ${product.updated}</span>
+          <span class="sku-badge">${escapeHtml(product.sku)}</span>
+          <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" />
+          <span class="updated-badge">QUOTE ${escapeHtml(product.updated)}</span>
         </div>
         <div class="card-copy">
-          <div class="card-meta"><span>${product.categoryLabel}</span><span>${product.owner}</span></div>
-          <h2>${product.name}</h2>
-          <div class="tag-row">${product.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
+          <div class="card-meta"><span>${escapeHtml(product.categoryLabel)}</span><span>${escapeHtml(product.owner || "?")}</span></div>
+          <h2>${escapeHtml(product.name)}</h2>
+          <div class="tag-row">${tags}</div>
         </div>
       </button>
       <div class="card-footer">
-        <span>MOQ <strong>${product.moq.toLocaleString()}</strong></span>
-        <button class="add-button ${added ? "is-added" : ""}" type="button" data-add="${product.sku}" aria-pressed="${added}">${added ? "已加入" : "+ 选品"}</button>
+        <span>MOQ <strong>${formatMoq(product)}</strong></span>
+        <button class="add-button ${added ? "is-added" : ""}" type="button" data-add="${escapeHtml(product.sku)}" aria-pressed="${added}">${added ? TEXT.selected : TEXT.select}</button>
       </div>
     </article>`;
 }
 
 function renderProducts() {
   const list = visibleProducts();
-  resultCount.textContent = list.length;
+  resultCount.textContent = list.length.toLocaleString();
   grid.innerHTML = list.map(productCard).join("");
   grid.classList.toggle("is-list", state.layout === "list");
   grid.hidden = list.length === 0;
@@ -127,78 +108,61 @@ function renderProducts() {
 }
 
 function detailTemplate(product) {
-  const gallery = product.gallery ?? [product.image];
+  const tags = (product.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
+  const imageCount = product.imageCount || 1;
   return `
     <section class="detail-hero">
-      <div class="detail-hero-media"><img src="${product.image}" alt="${product.name}" /></div>
+      <div class="detail-hero-media"><img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" /></div>
       <div class="detail-hero-copy">
-        <span class="detail-sku">${product.sku}</span>
-        <h2>${product.name}</h2>
-        <p class="detail-category">${product.categoryLabel} · 已审核入库</p>
+        <span class="detail-sku">${escapeHtml(product.sku)}</span>
+        <h2>${escapeHtml(product.name)}</h2>
+        <p class="detail-category">${escapeHtml(product.categoryLabel)} ? ${TEXT.approved}</p>
         <div class="detail-facts">
-          <div><span>MOQ</span><strong>${product.moq.toLocaleString()} pcs</strong></div>
-          <div><span>负责人</span><strong>${product.owner}</strong></div>
-          <div><span>报价版本</span><strong>v${product.updated}</strong></div>
-          <div><span>素材状态</span><strong>${gallery.length} 张可用</strong></div>
+          <div><span>MOQ</span><strong>${formatMoq(product)}</strong></div>
+          <div><span>???</span><strong>${escapeHtml(product.owner || "?")}</strong></div>
+          <div><span>????</span><strong>v${escapeHtml(product.updated)}</strong></div>
+          <div><span>????</span><strong>${imageCount.toLocaleString()} ${TEXT.imageAvailable}</strong></div>
         </div>
         <div class="detail-actions">
-          <button class="primary-button" type="button" data-detail-add="${product.sku}">${state.selected.has(product.sku) ? "已加入选品集" : "加入选品集"}</button>
-          <button class="secondary-button" type="button" data-copy="${product.sku}">复制产品资料</button>
+          <button class="primary-button" type="button" data-detail-add="${escapeHtml(product.sku)}">${state.selected.has(product.sku) ? TEXT.addedCollection : TEXT.addCollection}</button>
+          <button class="secondary-button" type="button" data-copy="${escapeHtml(product.sku)}">${TEXT.copy}</button>
         </div>
       </div>
     </section>
     <section class="detail-section">
-      <h3>产品资料</h3>
-      <p>${product.description ?? `${product.name}，适用于企业礼赠、活动推广与定制营销场景。`}</p>
+      <h3>${TEXT.productInfo}</h3>
+      <p>${escapeHtml(product.name)}?${TEXT.approved}??????????????????????????????</p>
       <dl class="spec-table">
-        <dt>Material</dt><dd>${product.material}</dd>
-        <dt>Item Size</dt><dd>${product.size ?? "详见备底报价"}</dd>
-        <dt>Imprint Method</dt><dd>${product.imprint ?? "Custom logo available"}</dd>
-        <dt>Set up Charge</dt><dd>${product.setup ?? "详见备底报价"}</dd>
+        <dt>${TEXT.material}</dt><dd>${escapeHtml(product.material || TEXT.quoteDetail)}</dd>
+        <dt>${TEXT.itemSize}</dt><dd>${TEXT.quoteDetail}</dd>
+        <dt>${TEXT.imprint}</dt><dd>Custom logo available</dd>
+        <dt>${TEXT.setup}</dt><dd>${TEXT.quoteDetail}</dd>
       </dl>
     </section>
     <section class="detail-section">
-      <h3>Marketing 标签</h3>
-      <div class="tag-row">${product.tags.map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
+      <h3>${TEXT.tags}</h3>
+      <div class="tag-row">${tags}</div>
     </section>
     <section class="detail-section price-section">
       <div class="version-heading">
-        <div><h3>价格与版本</h3><p>价格独立于产品资料更新，历史版本不会被覆盖。</p></div>
-        <span class="version-status">当前报价 v${product.updated}</span>
+        <div><h3>${TEXT.priceVersion}</h3><p>${TEXT.priceNote}</p></div>
+        <span class="version-status">${TEXT.currentQuote} v${escapeHtml(product.updated)}</span>
       </div>
-      <div class="price-basis">
-        <div><span>汇率基准</span><strong>${product.priceBasis?.exchangeRate ?? "见备底报价"}</strong></div>
-        <div><span>运费基准</span><strong>${product.priceBasis?.freight ?? product.updated}</strong></div>
-        <div><span>本次变价原因</span><strong>${product.priceBasis?.reason ?? "初始入库"}</strong></div>
-      </div>
-      ${product.priceTiers ? `
-        <div class="price-table-wrap" tabindex="0" aria-label="阶梯报价，可横向滚动">
-          <table class="price-table">
-            <thead><tr><th>QTY</th>${product.priceTiers.map((tier) => `<th>${tier.qty}</th>`).join("")}</tr></thead>
-            <tbody>
-              <tr><th>DDP Sea</th>${product.priceTiers.map((tier) => `<td>${tier.sea}</td>`).join("")}</tr>
-              <tr><th>DDP Air</th>${product.priceTiers.map((tier) => `<td>${tier.air}</td>`).join("")}</tr>
-            </tbody>
-          </table>
-        </div>` : ""}
       <div class="version-history">
-        ${(product.priceHistory ?? [{version: product.updated, date: product.updated, reason: "当前入库版本", current: true}]).map((item) => `
-          <div class="version-row">
-            <span class="version-dot ${item.current ? "is-current" : ""}" aria-hidden="true"></span>
-            <strong>v${item.version}</strong><span>${item.date}</span><span>${item.reason}</span>${item.current ? "<em>当前</em>" : ""}
-          </div>`).join("")}
+        <div class="version-row">
+          <span class="version-dot is-current" aria-hidden="true"></span>
+          <strong>v${escapeHtml(product.updated)}</strong><span>${escapeHtml(product.updated)}</span><span>${escapeHtml(product.quote)}</span><em>??</em>
+        </div>
       </div>
-      <p class="version-note">生成Catalog时会锁定当时的报价版本，后续调价不会悄悄改变历史Catalog。</p>
     </section>
     <section class="detail-section">
-      <h3>图片素材</h3>
-      <div class="detail-gallery">${gallery.map((image, index) => `<img src="${image}" alt="${product.name} 素材 ${index + 1}" />`).join("")}</div>
+      <h3>${TEXT.assets}</h3>
+      <div class="detail-gallery"><img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)} ?? 1" /></div>
     </section>
-    ${product.risk ? `<section class="detail-section"><h3>内部提示</h3><p class="risk-note">${product.risk}</p></section>` : ""}
     <section class="detail-section">
-      <h3>备底报价</h3>
-      <p>${product.quote}</p>
-      <button class="secondary-button" type="button" data-quote="${product.sku}" style="margin-top:12px">调用备底报价</button>
+      <h3>${TEXT.quote}</h3>
+      <p>${escapeHtml(product.quote)}</p>
+      <button class="secondary-button" type="button" data-quote="${escapeHtml(product.sku)}" style="margin-top:12px">${TEXT.callQuote}</button>
     </section>`;
 }
 
@@ -235,14 +199,14 @@ function renderCollection() {
   const chosen = products.filter((product) => state.selected.has(product.sku));
   document.querySelector("#collectionCount").textContent = chosen.length;
   document.querySelector("#sideCollectionCount").textContent = chosen.length;
-  document.querySelector("#drawerTotal").textContent = `${chosen.length} 个产品`;
+  document.querySelector("#drawerTotal").textContent = `${chosen.length} ${TEXT.productUnit}`;
   document.querySelector("#createCatalog").disabled = chosen.length === 0;
   document.querySelector("#drawerEmpty").hidden = chosen.length !== 0;
   document.querySelector("#drawerList").innerHTML = chosen.map((product) => `
     <article class="drawer-item">
-      <img src="${product.image}" alt="" />
-      <div><strong>${product.name}</strong><small>${product.sku} · MOQ ${product.moq} · 报价 v${product.updated}</small></div>
-      <button class="remove-button" type="button" data-remove="${product.sku}" aria-label="从选品集移除 ${product.name}">×</button>
+      <img src="${escapeHtml(product.image)}" alt="" />
+      <div><strong>${escapeHtml(product.name)}</strong><small>${escapeHtml(product.sku)} ? MOQ ${formatMoq(product)} ? ?? v${escapeHtml(product.updated)}</small></div>
+      <button class="remove-button" type="button" data-remove="${escapeHtml(product.sku)}" aria-label="?????? ${escapeHtml(product.name)}">?</button>
     </article>`).join("");
 }
 
@@ -264,9 +228,9 @@ function showToast(message) {
 }
 
 async function copyProduct(product) {
-  const text = `${product.sku} | ${product.name}\nMaterial: ${product.material}\nMOQ: ${product.moq}\nTags: ${product.tags.join(", ")}`;
-  try { await navigator.clipboard.writeText(text); showToast("产品资料已复制"); }
-  catch { showToast("原型已准备好产品资料"); }
+  const text = `${product.sku} | ${product.name}\nCategory: ${product.categoryLabel}\nMaterial: ${product.material}\nQuote: ${product.quote}`;
+  try { await navigator.clipboard.writeText(text); showToast(TEXT.copied); }
+  catch { showToast(TEXT.prepared); }
 }
 
 grid.addEventListener("click", (event) => {
@@ -292,7 +256,7 @@ document.querySelectorAll("[data-layout]").forEach((button) => button.addEventLi
 
 searchInput.addEventListener("input", () => { state.query = searchInput.value; renderProducts(); });
 document.querySelector("#sortSelect").addEventListener("change", (event) => { state.sort = event.target.value; renderProducts(); });
-document.querySelector("#clearSearch").addEventListener("click", () => { searchInput.value = ""; state.query = ""; state.filter = "全部"; document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("is-active", item.dataset.filter === "全部")); renderProducts(); searchInput.focus(); });
+document.querySelector("#clearSearch").addEventListener("click", () => { searchInput.value = ""; state.query = ""; state.filter = TEXT.all; document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("is-active", item.dataset.filter === TEXT.all)); renderProducts(); searchInput.focus(); });
 document.querySelector("#collectionButton").addEventListener("click", openCollection);
 document.querySelector("#closeCollection").addEventListener("click", closePanels);
 document.querySelector("#closeDetail").addEventListener("click", closePanels);
@@ -305,15 +269,15 @@ detailContent.addEventListener("click", (event) => {
   const quote = event.target.closest("[data-quote]");
   if (add) toggleSelected(add.dataset.detailAdd);
   if (copy) copyProduct(products.find((item) => item.sku === copy.dataset.copy));
-  if (quote) showToast(`${quote.dataset.quote} 的备底报价路径已准备调用`);
+  if (quote) showToast(`${quote.dataset.quote} ${TEXT.quoteReady}`);
 });
 
-document.querySelector("#createCatalog").addEventListener("click", () => showToast(`已锁定 ${state.selected.size} 个产品的当前报价版本`));
-document.querySelector("#syncButton").addEventListener("click", () => showToast("已扫描：没有新的已审核产品"));
+document.querySelector("#createCatalog").addEventListener("click", () => showToast(`${TEXT.catalogLockedPrefix}${state.selected.size}${TEXT.catalogLockedSuffix}`));
+document.querySelector("#syncButton").addEventListener("click", () => showToast(TEXT.syncDone));
 document.querySelectorAll(".nav-item").forEach((button) => button.addEventListener("click", () => {
   document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("is-active", item === button));
   if (button.dataset.view === "collections") openCollection();
-  else if (button.dataset.view !== "products") showToast(`${button.textContent.trim()} 将在下一阶段接入`);
+  else if (button.dataset.view !== "products") showToast(`${button.textContent.trim()} ${TEXT.future}`);
   document.querySelector(".sidebar").classList.remove("is-open");
 }));
 
