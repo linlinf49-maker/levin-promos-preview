@@ -1,23 +1,22 @@
 const libraryPayload = window.LEVIN_PRODUCTS || { products: [], sourceImageCount: 0, quoteSkuCount: 0 };
 const products = Array.isArray(libraryPayload.products) ? libraryPayload.products : [];
-const categoryMeta = Array.isArray(libraryPayload.categories) ? libraryPayload.categories : [];
+const categoryTreeMeta = Array.isArray(libraryPayload.categoryTree) ? libraryPayload.categoryTree : [];
 
-const FALLBACK_CATEGORIES = [
-  { id: "Drinkware", label: "\u996e\u5177\u9152\u5177" },
-  { id: "KitchenDining", label: "\u9910\u53a8\u7528\u54c1" },
-  { id: "BagsTravel", label: "\u7bb1\u5305\u51fa\u884c" },
-  { id: "Apparel", label: "\u670d\u9970\u914d\u4ef6" },
-  { id: "BeautyWellness", label: "\u7f8e\u5986\u4e2a\u62a4" },
-  { id: "HomeLiving", label: "\u5bb6\u5c45\u751f\u6d3b" },
-  { id: "TechOffice", label: "\u79d1\u6280\u529e\u516c" },
-  { id: "ToolsAuto", label: "\u5de5\u5177\u8f66\u8f7d" },
-  { id: "OutdoorSports", label: "\u6237\u5916\u8fd0\u52a8" },
-  { id: "EventsParty", label: "\u6d3b\u52a8\u8282\u5e86" },
-  { id: "DisplayPackaging", label: "\u5c55\u793a\u5305\u88c5" },
-  { id: "ToysGames", label: "\u73a9\u5177\u6e38\u620f" },
-  { id: "BadgesKeychains", label: "\u5fbd\u7ae0\u6302\u4ef6" },
-  { id: "Pets", label: "\u5ba0\u7269\u7528\u54c1" },
-  { id: "Other", label: "\u5176\u4ed6\u793c\u54c1" }
+const FALLBACK_CATEGORY_TREE = [
+  { id: "A_HOME", label: "A\u5c45\u5bb6\u65e5\u7528", children: [] },
+  { id: "B_DRINKWARE", label: "B\u996e\u5177\u9152\u5177", children: [] },
+  { id: "C_OUTDOOR_TRAVEL", label: "C\u6237\u5916\u548c\u65c5\u884c", children: [] },
+  { id: "D_KITCHEN", label: "D\u9910\u53a8\u7528\u54c1", children: [] },
+  { id: "E_BAGS_PACKAGING", label: "E\u7bb1\u5305\u5305\u88c5", children: [] },
+  { id: "F_EVENTS_DISPLAY", label: "F\u6d3b\u52a8\u5c55\u793a", children: [] },
+  { id: "G_TOYS_GAMES", label: "G\u73a9\u5177\u6e38\u620f", children: [] },
+  { id: "H_APPAREL_TOWELS", label: "H\u8863\u5e3d\u889c\u6bdb\u5dfe", children: [] },
+  { id: "I_ELECTRONICS", label: "I3C\u7535\u5b50", children: [] },
+  { id: "J_OFFICE", label: "J\u6587\u5177\u529e\u516c", children: [] },
+  { id: "K_BEAUTY_WELLNESS", label: "K\u7f8e\u5986\u4e2a\u62a4", children: [] },
+  { id: "L_KEYCHAIN_BADGE", label: "L\u94a5\u5319\u6263\u5fbd\u7ae0", children: [] },
+  { id: "M_TOOLS_AUTO", label: "M\u5de5\u5177\u8f66\u8f7d", children: [] },
+  { id: "N_OTHER", label: "N\u5176\u4ed6\u793c\u54c1", children: [] }
 ];
 
 const TEXT = {
@@ -53,7 +52,7 @@ const TEXT = {
   noMoq: "\u89c1\u62a5\u4ef7\u5355"
 };
 
-const state = { query: "", filter: TEXT.all, layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
+const state = { query: "", mainFilter: TEXT.all, subFilter: TEXT.all, layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
 const grid = document.querySelector("#productGrid");
 const resultCount = document.querySelector("#resultCount");
 const emptyState = document.querySelector("#emptyState");
@@ -70,37 +69,65 @@ function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
 }
 
-function getFilterCategories() {
-  const counts = new Map();
-  products.forEach((product) => counts.set(product.category, (counts.get(product.category) || 0) + 1));
-  const source = categoryMeta.length ? categoryMeta : FALLBACK_CATEGORIES;
-  const seen = new Set();
-  const ordered = source
-    .map((category) => {
-      seen.add(category.id);
-      return { id: category.id, label: category.label, count: counts.get(category.id) || category.count || 0 };
-    })
-    .filter((category) => category.id && category.count > 0);
+function productMainCategory(product) {
+  return product.mainCategory || product.category || "";
+}
 
-  counts.forEach((count, id) => {
-    if (!seen.has(id) && count > 0) {
-      const product = products.find((item) => item.category === id);
-      ordered.push({ id, label: product?.categoryLabel || id, count });
-    }
+function productSubCategory(product) {
+  return product.subCategory || "";
+}
+
+function productCategoryPath(product) {
+  return product.categoryPathLabel || [product.mainCategoryLabel || product.categoryLabel, product.subCategoryLabel].filter(Boolean).join(" / ");
+}
+
+function getCategoryTree() {
+  if (categoryTreeMeta.length) return categoryTreeMeta;
+
+  const counts = new Map();
+  const subCounts = new Map();
+  products.forEach((product) => {
+    const main = productMainCategory(product);
+    const sub = productSubCategory(product);
+    counts.set(main, (counts.get(main) || 0) + 1);
+    if (sub) subCounts.set(`${main}::${sub}`, (subCounts.get(`${main}::${sub}`) || 0) + 1);
   });
-  return ordered;
+
+  return FALLBACK_CATEGORY_TREE
+    .map((node) => ({ ...node, count: counts.get(node.id) || 0, children: node.children || [] }))
+    .filter((node) => node.count > 0);
+}
+
+function activeMainNode() {
+  return getCategoryTree().find((node) => node.id === state.mainFilter);
 }
 
 function renderFilterChips() {
-  const chips = [
-    `<button class="filter-chip is-active" type="button" data-filter="${TEXT.all}">${TEXT.all}\u4ea7\u54c1<span class="chip-count">${products.length.toLocaleString()}</span></button>`,
-    ...getFilterCategories().map((category) => `
-      <button class="filter-chip" type="button" data-filter="${escapeHtml(category.id)}">
-        ${escapeHtml(category.label)}
-        <span class="chip-count">${category.count.toLocaleString()}</span>
+  const tree = getCategoryTree();
+  const mainNode = activeMainNode();
+  const allActive = state.mainFilter === TEXT.all;
+  const mainButtons = [
+    `<button class="filter-chip ${allActive ? "is-active" : ""}" type="button" data-filter-all="true">${TEXT.all}\u4ea7\u54c1<span class="chip-count">${products.length.toLocaleString()}</span></button>`,
+    ...tree.map((node) => `
+      <button class="filter-chip ${state.mainFilter === node.id ? "is-active" : ""}" type="button" data-main="${escapeHtml(node.id)}">
+        ${escapeHtml(node.label)}
+        <span class="chip-count">${Number(node.count || 0).toLocaleString()}</span>
       </button>`)
-  ];
-  filterChips.innerHTML = chips.join("");
+  ].join("");
+
+  const subButtons = mainNode ? [
+    `<button class="filter-chip is-sub ${state.subFilter === TEXT.all ? "is-active" : ""}" type="button" data-sub="${TEXT.all}">\u5168\u90e8${escapeHtml(mainNode.label)}<span class="chip-count">${Number(mainNode.count || 0).toLocaleString()}</span></button>`,
+    ...(mainNode.children || []).map((child) => `
+      <button class="filter-chip is-sub ${state.subFilter === child.id ? "is-active" : ""}" type="button" data-sub="${escapeHtml(child.id)}">
+        ${escapeHtml(child.label)}
+        <span class="chip-count">${Number(child.count || 0).toLocaleString()}</span>
+      </button>`)
+  ].join("") : `<span class="taxonomy-hint">\u5148\u9009\u5927\u7c7b\uff0c\u518d\u7cbe\u786e\u5230\u5b50\u7c7b\uff1b\u641c\u7d22\u4f1a\u540c\u65f6\u8986\u76d6 SKU\u3001\u4ea7\u54c1\u540d\u548c\u5206\u7c7b\u3002</span>`;
+
+  filterChips.innerHTML = `
+    <div class="category-row main-category-row">${mainButtons}</div>
+    <div class="category-row sub-category-row ${mainNode ? "has-subcategories" : ""}">${subButtons}</div>
+  `;
 }
 
 function formatMoq(product) {
@@ -108,15 +135,16 @@ function formatMoq(product) {
 }
 
 function normalizedSearchText(product) {
-  return [product.sku, product.name, product.categoryLabel, product.material, product.owner, product.quote, ...(product.tags || [])].join(" ").toLowerCase();
+  return [product.sku, product.name, product.categoryLabel, product.mainCategoryLabel, product.subCategoryLabel, productCategoryPath(product), product.material, product.owner, product.quote, ...(product.tags || [])].join(" ").toLowerCase();
 }
 
 function visibleProducts() {
   const query = state.query.trim().toLowerCase();
   let list = products.filter((product) => {
-    const matchesFilter = state.filter === TEXT.all || product.category === state.filter;
+    const matchesMain = state.mainFilter === TEXT.all || productMainCategory(product) === state.mainFilter;
+    const matchesSub = state.subFilter === TEXT.all || productSubCategory(product) === state.subFilter;
     const matchesQuery = !query || normalizedSearchText(product).includes(query);
-    return matchesFilter && matchesQuery;
+    return matchesMain && matchesSub && matchesQuery;
   });
 
   list = [...list].sort((a, b) => {
@@ -139,7 +167,7 @@ function productCard(product) {
           <span class="updated-badge">QUOTE ${escapeHtml(product.updated)}</span>
         </div>
         <div class="card-copy">
-          <div class="card-meta"><span>${escapeHtml(product.categoryLabel)}</span><span>${escapeHtml(product.owner || "?")}</span></div>
+          <div class="card-meta"><span>${escapeHtml(productCategoryPath(product))}</span><span>${escapeHtml(product.owner || "?")}</span></div>
           <h2>${escapeHtml(product.name)}</h2>
           <div class="tag-row">${tags}</div>
         </div>
@@ -169,7 +197,7 @@ function detailTemplate(product) {
       <div class="detail-hero-copy">
         <span class="detail-sku">${escapeHtml(product.sku)}</span>
         <h2>${escapeHtml(product.name)}</h2>
-        <p class="detail-category">${escapeHtml(product.categoryLabel)} · ${TEXT.approved}</p>
+        <p class="detail-category">${escapeHtml(productCategoryPath(product))} · ${TEXT.approved}</p>
         <div class="detail-facts">
           <div><span>MOQ</span><strong>${formatMoq(product)}</strong></div>
           <div><span>负责人</span><strong>${escapeHtml(product.owner || "?")}</strong></div>
@@ -281,7 +309,7 @@ function showToast(message) {
 }
 
 async function copyProduct(product) {
-  const text = `${product.sku} | ${product.name}\nCategory: ${product.categoryLabel}\nMaterial: ${product.material}\nQuote: ${product.quote}`;
+  const text = `${product.sku} | ${product.name}\nCategory: ${productCategoryPath(product)}\nMaterial: ${product.material}\nQuote: ${product.quote}`;
   try { await navigator.clipboard.writeText(text); showToast(TEXT.copied); }
   catch { showToast(TEXT.prepared); }
 }
@@ -294,10 +322,21 @@ grid.addEventListener("click", (event) => {
 });
 
 filterChips.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-filter]");
-  if (!button) return;
-  state.filter = button.dataset.filter;
-  document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("is-active", item === button));
+  const allButton = event.target.closest("[data-filter-all]");
+  const mainButton = event.target.closest("[data-main]");
+  const subButton = event.target.closest("[data-sub]");
+  if (allButton) {
+    state.mainFilter = TEXT.all;
+    state.subFilter = TEXT.all;
+  } else if (mainButton) {
+    state.mainFilter = mainButton.dataset.main;
+    state.subFilter = TEXT.all;
+  } else if (subButton) {
+    state.subFilter = subButton.dataset.sub;
+  } else {
+    return;
+  }
+  renderFilterChips();
   renderProducts();
 });
 
@@ -309,7 +348,7 @@ document.querySelectorAll("[data-layout]").forEach((button) => button.addEventLi
 
 searchInput.addEventListener("input", () => { state.query = searchInput.value; renderProducts(); });
 document.querySelector("#sortSelect").addEventListener("change", (event) => { state.sort = event.target.value; renderProducts(); });
-document.querySelector("#clearSearch").addEventListener("click", () => { searchInput.value = ""; state.query = ""; state.filter = TEXT.all; document.querySelectorAll("[data-filter]").forEach((item) => item.classList.toggle("is-active", item.dataset.filter === TEXT.all)); renderProducts(); searchInput.focus(); });
+document.querySelector("#clearSearch").addEventListener("click", () => { searchInput.value = ""; state.query = ""; state.mainFilter = TEXT.all; state.subFilter = TEXT.all; renderFilterChips(); renderProducts(); searchInput.focus(); });
 document.querySelector("#collectionButton").addEventListener("click", openCollection);
 document.querySelector("#closeCollection").addEventListener("click", closePanels);
 document.querySelector("#closeDetail").addEventListener("click", closePanels);

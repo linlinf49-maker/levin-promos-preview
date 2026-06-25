@@ -151,19 +151,30 @@ h1 { max-width: 940px; margin: 0; font-size: clamp(2.6rem, 5.5vw, 5.35rem); line
 .library-stats strong, .library-stats span { display: block; }
 .library-stats strong { font: 700 var(--text-xl)/1 var(--font-mono); letter-spacing: -0.05em; }
 .library-stats span { margin-top: 7px; color: var(--muted); font-size: var(--text-xs); }
-.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 0 14px; }
-.filter-chips { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 0 14px; }
+.filter-chips {
+  flex: 1; display: grid; gap: 10px; min-width: 0; padding: 12px;
+  border: 1px solid rgba(42, 39, 34, 0.08); border-radius: 24px;
+  background: rgba(255, 253, 248, 0.62); box-shadow: 0 12px 34px rgba(28, 23, 16, 0.045);
+}
+.category-row { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.sub-category-row {
+  min-height: 40px; align-items: center; padding-top: 10px;
+  border-top: 1px solid rgba(42, 39, 34, 0.08);
+}
+.taxonomy-hint { color: var(--muted); font-size: var(--text-sm); }
 .filter-chip, .view-button {
   flex: 0 0 auto; min-height: 40px; padding: 0 15px; background: rgba(255, 253, 248, 0.72);
   border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
 }
 .filter-chip:hover, .filter-chip.is-active { border-color: var(--ink); background: var(--ink); color: white; }
+.filter-chip.is-sub { min-height: 34px; padding-inline: 12px; font-size: var(--text-sm); background: rgba(246, 240, 230, 0.62); }
 .chip-count {
   display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 7px;
   border-radius: 999px; background: rgba(15, 15, 13, 0.07); color: var(--muted); font-family: var(--font-mono); font-size: 0.72rem;
 }
 .filter-chip:hover .chip-count, .filter-chip.is-active .chip-count { background: rgba(255, 255, 255, 0.18); color: rgba(255, 255, 255, 0.86); }
-.view-controls { display: flex; }
+.view-controls { display: flex; padding-top: 12px; }
 .view-button { width: 40px; padding: 0; font-size: 1.1rem; }
 .view-button + .view-button { margin-left: 6px; }
 .view-button.is-active { background: var(--ink); color: white; }
