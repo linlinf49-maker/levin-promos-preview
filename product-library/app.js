@@ -112,27 +112,40 @@ function renderFilterChips() {
   const mainNode = previewMainNode();
   const allActive = state.mainFilter === TEXT.all;
   const previewing = mainNode && state.hoverMain && state.hoverMain !== state.mainFilter;
-  const mainButtons = [
-    `<button class="filter-chip ${allActive ? "is-active" : ""}" type="button" data-filter-all="true">${TEXT.all}\u4ea7\u54c1<span class="chip-count">${products.length.toLocaleString()}</span></button>`,
-    ...tree.map((node) => `
-      <button class="filter-chip ${state.mainFilter === node.id ? "is-active" : ""} ${state.hoverMain === node.id && state.mainFilter !== node.id ? "is-preview" : ""}" type="button" data-main="${escapeHtml(node.id)}" aria-expanded="${mainNode?.id === node.id ? "true" : "false"}">
-        ${escapeHtml(node.label)}
-        <span class="chip-count">${Number(node.count || 0).toLocaleString()}</span>
-      </button>`)
-  ].join("");
 
-  const subButtons = mainNode ? [
-    `<button class="filter-chip is-sub ${state.mainFilter === mainNode.id && state.subFilter === TEXT.all ? "is-active" : ""}" type="button" data-sub="${TEXT.all}" data-parent-main="${escapeHtml(mainNode.id)}">\u5168\u90e8${escapeHtml(mainNode.label)}<span class="chip-count">${Number(mainNode.count || 0).toLocaleString()}</span></button>`,
-    ...(mainNode.children || []).map((child) => `
-      <button class="filter-chip is-sub ${state.mainFilter === mainNode.id && state.subFilter === child.id ? "is-active" : ""}" type="button" data-sub="${escapeHtml(child.id)}" data-parent-main="${escapeHtml(mainNode.id)}">
-        ${escapeHtml(child.label)}
-        <span class="chip-count">${Number(child.count || 0).toLocaleString()}</span>
-      </button>`)
-  ].join("") : `<span class="taxonomy-hint">\u5148\u9009\u5927\u7c7b\uff0c\u518d\u7cbe\u786e\u5230\u5b50\u7c7b\uff1b\u641c\u7d22\u4f1a\u540c\u65f6\u8986\u76d6 SKU\u3001\u4ea7\u54c1\u540d\u548c\u5206\u7c7b\u3002</span>`;
+  const dropdownFor = (node) => {
+    const subButtons = [
+      `<button class="filter-chip is-sub ${state.mainFilter === node.id && state.subFilter === TEXT.all ? "is-active" : ""}" type="button" data-sub="${TEXT.all}" data-parent-main="${escapeHtml(node.id)}">\u5168\u90e8${escapeHtml(node.label)}<span class="chip-count">${Number(node.count || 0).toLocaleString()}</span></button>`,
+      ...(node.children || []).map((child) => `
+        <button class="filter-chip is-sub ${state.mainFilter === node.id && state.subFilter === child.id ? "is-active" : ""}" type="button" data-sub="${escapeHtml(child.id)}" data-parent-main="${escapeHtml(node.id)}">
+          ${escapeHtml(child.label)}
+          <span class="chip-count">${Number(child.count || 0).toLocaleString()}</span>
+        </button>`)
+    ].join("");
+
+    return `
+      <div class="category-dropdown ${previewing ? "is-previewing" : ""}" role="group" aria-label="${escapeHtml(node.label)} \u5b50\u7c7b">
+        ${subButtons}
+      </div>`;
+  };
+
+  const mainButtons = [
+    `<div class="category-item category-item-all"><button class="filter-chip ${allActive ? "is-active" : ""}" type="button" data-filter-all="true">${TEXT.all}\u4ea7\u54c1<span class="chip-count">${products.length.toLocaleString()}</span></button></div>`,
+    ...tree.map((node) => {
+      const isOpen = mainNode?.id === node.id;
+      return `
+        <div class="category-item ${isOpen ? "is-open" : ""}">
+          <button class="filter-chip ${state.mainFilter === node.id ? "is-active" : ""} ${state.hoverMain === node.id && state.mainFilter !== node.id ? "is-preview" : ""}" type="button" data-main="${escapeHtml(node.id)}" aria-expanded="${isOpen ? "true" : "false"}">
+            ${escapeHtml(node.label)}
+            <span class="chip-count">${Number(node.count || 0).toLocaleString()}</span>
+          </button>
+          ${isOpen ? dropdownFor(node) : ""}
+        </div>`;
+    })
+  ].join("");
 
   filterChips.innerHTML = `
     <div class="category-row main-category-row">${mainButtons}</div>
-    <div class="category-row sub-category-row ${mainNode ? "has-subcategories" : ""} ${previewing ? "is-previewing" : ""}">${subButtons}</div>
   `;
 }
 
