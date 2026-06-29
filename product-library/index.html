@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Levin Marketing 内部产品库原型" />
     <title>Levin Product Library</title>
-    <link rel="stylesheet" href="./styles.css?v=20260626-bc-logo-v1" />
+    <link rel="stylesheet" href="./styles.css?v=20260629-catalog-v1" />
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -169,10 +169,21 @@
       </div>
     </aside>
 
+    <aside class="catalog-panel" id="catalogPanel" aria-label="Catalog 预览" aria-hidden="true">
+      <div class="catalog-panel-head">
+        <div>
+          <p class="eyebrow">CATALOG STUDIO</p>
+          <h2>Catalog 预览</h2>
+        </div>
+        <button class="icon-button" id="closeCatalog" type="button" aria-label="关闭 Catalog 预览">×</button>
+      </div>
+      <div id="catalogContent"></div>
+    </aside>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./data/products.js?v=20260625-local-owner-fix-v1"></script>
-    <script src="./data/clientVault.js?v=20260626-bc-logo-v1"></script>
-    <script src="./app.js?v=20260626-bc-logo-v1"></script>
+    <script src="./data/products.js?v=20260629-catalog-v1"></script>
+    <script src="./data/clientVault.js?v=20260629-catalog-v1"></script>
+    <script src="./app.js?v=20260629-catalog-v1"></script>
   </body>
 </html>

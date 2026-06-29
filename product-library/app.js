@@ -81,6 +81,8 @@ const filterChips = document.querySelector("#filterChips");
 const detailPanel = document.querySelector("#detailPanel");
 const detailContent = document.querySelector("#detailContent");
 const collectionDrawer = document.querySelector("#collectionDrawer");
+const catalogPanel = document.querySelector("#catalogPanel");
+const catalogContent = document.querySelector("#catalogContent");
 const clientVaultPanel = document.querySelector("#clientVaultPanel");
 const clientVaultContent = document.querySelector("#clientVaultContent");
 const scrim = document.querySelector("#scrim");
@@ -356,11 +358,21 @@ function closePanels() {
   detailPanel.setAttribute("aria-hidden", "true");
   collectionDrawer.classList.remove("is-open");
   collectionDrawer.setAttribute("aria-hidden", "true");
+  if (catalogPanel) {
+    catalogPanel.classList.remove("is-open");
+    catalogPanel.setAttribute("aria-hidden", "true");
+  }
   if (clientVaultPanel) {
     clientVaultPanel.classList.remove("is-open");
     clientVaultPanel.setAttribute("aria-hidden", "true");
   }
   scrim.hidden = true;
+}
+
+function selectedProducts() {
+  return Array.from(state.selected)
+    .map((sku) => products.find((product) => product.sku === sku))
+    .filter(Boolean);
 }
 
 function toggleSelected(sku) {
@@ -372,7 +384,7 @@ function toggleSelected(sku) {
 }
 
 function renderCollection() {
-  const chosen = products.filter((product) => state.selected.has(product.sku));
+  const chosen = selectedProducts();
   document.querySelector("#collectionCount").textContent = chosen.length;
   document.querySelector("#sideCollectionCount").textContent = chosen.length;
   document.querySelector("#drawerTotal").textContent = `${chosen.length} ${TEXT.productUnit}`;
@@ -390,10 +402,132 @@ function openCollection() {
   renderCollection();
   detailPanel.classList.remove("is-open");
   detailPanel.setAttribute("aria-hidden", "true");
+  if (catalogPanel) {
+    catalogPanel.classList.remove("is-open");
+    catalogPanel.setAttribute("aria-hidden", "true");
+  }
   collectionDrawer.classList.add("is-open");
   collectionDrawer.setAttribute("aria-hidden", "false");
   scrim.hidden = false;
   document.querySelector("#closeCollection").focus();
+}
+
+function catalogDateLabel(date = new Date()) {
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function catalogVersionLabel(product) {
+  return product.updated ? `v${product.updated}` : "报价版本待确认";
+}
+
+function renderCatalogPreview(chosen) {
+  const categories = [...new Set(chosen.map((product) => product.mainCategoryLabel || product.categoryLabel).filter(Boolean))];
+  const quoteVersions = [...new Set(chosen.map((product) => product.updated).filter(Boolean))];
+  const categoryPills = categories.slice(0, 8).map((label) => `<span>${escapeHtml(label)}</span>`).join("");
+  const productCards = chosen.map((product, index) => `
+    <article class="catalog-product-card">
+      <div class="catalog-product-media">
+        <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" />
+        <span>${String(index + 1).padStart(2, "0")}</span>
+      </div>
+      <div class="catalog-product-copy">
+        <p>${escapeHtml(productCategoryPath(product) || "Product")}</p>
+        <h4>${escapeHtml(product.name)}</h4>
+        <dl>
+          <div><dt>SKU</dt><dd>${escapeHtml(product.sku)}</dd></div>
+          <div><dt>MOQ</dt><dd>${escapeHtml(formatMoq(product))}</dd></div>
+          <div><dt>负责人</dt><dd>${escapeHtml(product.owner || "-")}</dd></div>
+          <div><dt>报价版本</dt><dd>${escapeHtml(catalogVersionLabel(product))}</dd></div>
+        </dl>
+        <div class="catalog-tags">${(product.tags || []).slice(0, 4).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("")}</div>
+      </div>
+    </article>`).join("");
+  const manifestRows = chosen.map((product) => `
+    <tr>
+      <td>${escapeHtml(product.sku)}</td>
+      <td>${escapeHtml(product.name)}</td>
+      <td>${escapeHtml(productCategoryPath(product) || "-")}</td>
+      <td>${escapeHtml(product.owner || "-")}</td>
+      <td>${escapeHtml(catalogVersionLabel(product))}</td>
+    </tr>`).join("");
+
+  catalogContent.innerHTML = `
+    <section class="catalog-studio">
+      <div class="catalog-action-row">
+        <button class="secondary-button" type="button" data-catalog-back>返回选品集</button>
+        <div>
+          <button class="secondary-button" type="button" data-catalog-copy>复制 SKU 清单</button>
+          <button class="primary-button" type="button" data-catalog-print>打印 / 另存 PDF</button>
+        </div>
+      </div>
+
+      <section class="catalog-sheet catalog-cover">
+        <p class="eyebrow">LEVIN SELECTED PRODUCTS · ${escapeHtml(catalogDateLabel())}</p>
+        <h3>Selected Products Catalog</h3>
+        <p>从当前选品集生成的 Catalog 预览，已锁定 SKU、主图、分类与报价版本。正式对外价格仍以对应备底报价单为准。</p>
+        <div class="catalog-cover-stats">
+          <div><strong>${chosen.length}</strong><span>Products</span></div>
+          <div><strong>${categories.length || 1}</strong><span>Categories</span></div>
+          <div><strong>${quoteVersions.length || 1}</strong><span>Quote versions</span></div>
+        </div>
+        <div class="catalog-category-pills">${categoryPills}</div>
+      </section>
+
+      <section class="catalog-note">
+        <strong>报价快照说明</strong>
+        <p>当前公开页面不会展示价格明细；Catalog 只记录报价版本号。若汇率、运费或供应商价格变化，请生成新版本，不要覆盖旧 Catalog。</p>
+      </section>
+
+      <section class="catalog-product-grid">${productCards}</section>
+
+      <section class="catalog-sheet catalog-manifest">
+        <div class="catalog-section-heading">
+          <p class="eyebrow">SOURCE MANIFEST</p>
+          <h3>SKU 与报价版本清单</h3>
+        </div>
+        <div class="catalog-table-wrap">
+          <table>
+            <thead><tr><th>SKU</th><th>Product</th><th>Category</th><th>Owner</th><th>Quote</th></tr></thead>
+            <tbody>${manifestRows}</tbody>
+          </table>
+        </div>
+      </section>
+    </section>`;
+}
+
+function openCatalogPreview() {
+  const chosen = selectedProducts();
+  if (!chosen.length) {
+    showToast("请先加入产品到选品集");
+    return;
+  }
+  renderCatalogPreview(chosen);
+  detailPanel.classList.remove("is-open");
+  detailPanel.setAttribute("aria-hidden", "true");
+  collectionDrawer.classList.remove("is-open");
+  collectionDrawer.setAttribute("aria-hidden", "true");
+  if (clientVaultPanel) {
+    clientVaultPanel.classList.remove("is-open");
+    clientVaultPanel.setAttribute("aria-hidden", "true");
+  }
+  catalogPanel.classList.add("is-open");
+  catalogPanel.setAttribute("aria-hidden", "false");
+  scrim.hidden = false;
+  showToast(`已生成 ${chosen.length} 个产品的 Catalog 预览`);
+  document.querySelector("#closeCatalog").focus();
+}
+
+async function copyCatalogSkus() {
+  const chosen = selectedProducts();
+  const skuList = chosen.map((product) => `${product.sku}\t${product.name}\t${catalogVersionLabel(product)}`).join("\n");
+  const copied = await copyTextToClipboard(skuList);
+  showToast(copied ? "Catalog SKU 清单已复制" : "SKU 清单已准备好，请手动复制");
+}
+
+function printCatalogPreview() {
+  document.body.classList.add("is-printing-catalog");
+  window.setTimeout(() => window.print(), 120);
+  window.setTimeout(() => document.body.classList.remove("is-printing-catalog"), 1200);
 }
 
 function showToast(message) {
@@ -622,6 +756,10 @@ function openClientVault() {
   detailPanel.setAttribute("aria-hidden", "true");
   collectionDrawer.classList.remove("is-open");
   collectionDrawer.setAttribute("aria-hidden", "true");
+  if (catalogPanel) {
+    catalogPanel.classList.remove("is-open");
+    catalogPanel.setAttribute("aria-hidden", "true");
+  }
   clientVaultPanel.classList.add("is-open");
   clientVaultPanel.setAttribute("aria-hidden", "false");
   scrim.hidden = false;
@@ -710,6 +848,7 @@ document.querySelector("#clearSearch").addEventListener("click", () => { searchI
 document.querySelector("#collectionButton").addEventListener("click", openCollection);
 document.querySelector("#closeCollection").addEventListener("click", closePanels);
 document.querySelector("#closeDetail").addEventListener("click", closePanels);
+document.querySelector("#closeCatalog").addEventListener("click", closePanels);
 document.querySelector("#closeClientVault").addEventListener("click", closePanels);
 scrim.addEventListener("click", closePanels);
 document.querySelector("#drawerList").addEventListener("click", (event) => { const remove = event.target.closest("[data-remove]"); if (remove) toggleSelected(remove.dataset.remove); });
@@ -723,7 +862,15 @@ detailContent.addEventListener("click", (event) => {
   if (quote) copyQuotePath(products.find((item) => item.sku === quote.dataset.quote));
 });
 
-document.querySelector("#createCatalog").addEventListener("click", () => showToast(`${TEXT.catalogLockedPrefix}${state.selected.size}${TEXT.catalogLockedSuffix}`));
+document.querySelector("#createCatalog").addEventListener("click", openCatalogPreview);
+catalogContent.addEventListener("click", (event) => {
+  const back = event.target.closest("[data-catalog-back]");
+  const copy = event.target.closest("[data-catalog-copy]");
+  const print = event.target.closest("[data-catalog-print]");
+  if (back) openCollection();
+  if (copy) copyCatalogSkus();
+  if (print) printCatalogPreview();
+});
 document.querySelector("#syncButton").addEventListener("click", () => showToast(TEXT.syncDone));
 
 clientVaultContent.addEventListener("submit", (event) => {
