@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Levin Marketing 内部产品库原型" />
     <title>Levin Product Library</title>
-    <link rel="stylesheet" href="./styles.css?v=20260625-owner-name-fix-v1" />
+    <link rel="stylesheet" href="./styles.css?v=20260626-bc-logo-v1" />
   </head>
   <body>
     <a class="skip-link" href="#main">跳到主要内容</a>
@@ -38,6 +38,11 @@
             <span class="nav-index">04</span>
             <span>素材中心</span>
           </button>
+          <button class="nav-item nav-item-vault" type="button" data-view="clientVault">
+            <span class="nav-index">05</span>
+            <span>客户方案库</span>
+            <span class="nav-lock">LOCK</span>
+          </button>
         </nav>
 
         <div class="sync-panel">
@@ -58,12 +63,6 @@
       <main class="main" id="main">
         <header class="topbar">
           <button class="mobile-menu" id="mobileMenu" type="button" aria-label="打开导航" aria-expanded="false">菜单</button>
-          <label class="global-search">
-            <span class="search-icon" aria-hidden="true"></span>
-            <span class="sr-only">搜索产品</span>
-            <input id="searchInput" type="search" placeholder="搜索 SKU、产品名称、材质或营销标签…" autocomplete="off" />
-            <kbd>⌘ K</kbd>
-          </label>
           <button class="collection-button" id="collectionButton" type="button">
             选品集
             <span id="collectionCount">0</span>
@@ -81,6 +80,16 @@
             <div><strong>8,186</strong><span>图片素材</span></div>
             <div><strong>100%</strong><span>报价单有图率</span></div>
           </div>
+        </section>
+
+        <section class="search-panel" aria-label="产品搜索">
+          <label class="global-search">
+            <span class="search-icon" aria-hidden="true"></span>
+            <span class="sr-only">搜索产品</span>
+            <input id="searchInput" type="search" placeholder="搜索产品编号、负责人、产品名称、材质、Marketing 标签…" autocomplete="off" />
+            <kbd>⌘ K</kbd>
+          </label>
+          <p>可搜索：SKU 编号 / 负责人 / 产品名称 / 材质 / Marketing 标签</p>
         </section>
 
         <section class="toolbar" aria-label="产品筛选">
@@ -130,6 +139,17 @@
       <div id="detailContent"></div>
     </aside>
 
+    <aside class="client-vault-panel" id="clientVaultPanel" aria-label="客户方案库" aria-hidden="true">
+      <div class="vault-panel-head">
+        <div>
+          <p class="eyebrow">CLIENT VAULT</p>
+          <h2>客户方案库</h2>
+        </div>
+        <button class="icon-button vault-close" id="closeClientVault" type="button" aria-label="关闭客户方案库">×</button>
+      </div>
+      <div id="clientVaultContent"></div>
+    </aside>
+
     <aside class="collection-drawer" id="collectionDrawer" aria-label="选品集" aria-hidden="true">
       <div class="drawer-head">
         <div>
@@ -151,7 +171,8 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-    <script src="./data/products.js?v=20260625-owner-name-fix-v1"></script>
-    <script src="./app.js?v=20260625-owner-name-fix-v1"></script>
+    <script src="./data/products.js?v=20260625-local-owner-fix-v1"></script>
+    <script src="./data/clientVault.js?v=20260626-bc-logo-v1"></script>
+    <script src="./app.js?v=20260626-bc-logo-v1"></script>
   </body>
 </html>

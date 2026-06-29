@@ -1,6 +1,9 @@
 const libraryPayload = window.LEVIN_PRODUCTS || { products: [], sourceImageCount: 0, quoteSkuCount: 0 };
 const products = Array.isArray(libraryPayload.products) ? libraryPayload.products : [];
 const categoryTreeMeta = Array.isArray(libraryPayload.categoryTree) ? libraryPayload.categoryTree : [];
+const clientVaultPayload = window.LEVIN_CLIENT_VAULT || { credentials: { username: "marketing", password: "levin2026" }, clients: [] };
+const vaultClients = Array.isArray(clientVaultPayload.clients) ? clientVaultPayload.clients : [];
+const vaultCredentials = clientVaultPayload.credentials || { username: "marketing", password: "levin2026" };
 
 const FALLBACK_CATEGORY_TREE = [
   { id: "A_HOME", label: "\u5c45\u5bb6\u65e5\u7528", children: [] },
@@ -58,7 +61,18 @@ const TEXT = {
   noMoq: "\u89c1\u62a5\u4ef7\u5355"
 };
 
-const state = { query: "", mainFilter: TEXT.all, subFilter: TEXT.all, hoverMain: null, layout: "grid", sort: "recent", selected: new Set(), activeProduct: null };
+const state = {
+  query: "",
+  mainFilter: TEXT.all,
+  subFilter: TEXT.all,
+  hoverMain: null,
+  layout: "grid",
+  sort: "recent",
+  selected: new Set(),
+  activeProduct: null,
+  vaultUnlocked: false,
+  activeClient: null
+};
 const grid = document.querySelector("#productGrid");
 const resultCount = document.querySelector("#resultCount");
 const emptyState = document.querySelector("#emptyState");
@@ -67,12 +81,30 @@ const filterChips = document.querySelector("#filterChips");
 const detailPanel = document.querySelector("#detailPanel");
 const detailContent = document.querySelector("#detailContent");
 const collectionDrawer = document.querySelector("#collectionDrawer");
+const clientVaultPanel = document.querySelector("#clientVaultPanel");
+const clientVaultContent = document.querySelector("#clientVaultContent");
 const scrim = document.querySelector("#scrim");
 const toast = document.querySelector("#toast");
 let toastTimer;
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[char]));
+}
+
+function setVaultSession(unlocked) {
+  state.vaultUnlocked = unlocked;
+  try {
+    if (unlocked) sessionStorage.setItem("levinClientVaultUnlocked", "true");
+    else sessionStorage.removeItem("levinClientVaultUnlocked");
+  } catch {
+    // Session storage is only a convenience for this local prototype.
+  }
+}
+
+try {
+  state.vaultUnlocked = sessionStorage.getItem("levinClientVaultUnlocked") === "true";
+} catch {
+  state.vaultUnlocked = false;
 }
 
 function productMainCategory(product) {
@@ -185,7 +217,13 @@ function formatMoq(product) {
 }
 
 function normalizedSearchText(product) {
-  return [product.sku, product.name, product.categoryLabel, product.mainCategoryLabel, product.subCategoryLabel, productCategoryPath(product), product.material, product.owner, product.quote, ...(product.tags || [])].join(" ").toLowerCase();
+  return [
+    product.sku,
+    product.owner,
+    product.name,
+    product.material,
+    ...(product.tags || [])
+  ].join(" ").toLowerCase();
 }
 
 function visibleProducts() {
@@ -318,6 +356,10 @@ function closePanels() {
   detailPanel.setAttribute("aria-hidden", "true");
   collectionDrawer.classList.remove("is-open");
   collectionDrawer.setAttribute("aria-hidden", "true");
+  if (clientVaultPanel) {
+    clientVaultPanel.classList.remove("is-open");
+    clientVaultPanel.setAttribute("aria-hidden", "true");
+  }
   scrim.hidden = true;
 }
 
@@ -377,6 +419,221 @@ async function copyQuotePath(product) {
     window.prompt(TEXT.quotePathPrepared, path);
     showToast(TEXT.quotePathPrepared);
   }
+}
+
+function clientProductRecords(client) {
+  if (Array.isArray(client.products) && client.products.length) return client.products;
+  return (client.proposals || []).map((item) => ({
+    name: item.title,
+    category: item.type || "Product",
+    date: item.date,
+    status: item.status || "Product record",
+    highlights: item.tags || [],
+    note: `${item.title} 产品记录`,
+    productCount: item.productCount || 1
+  }));
+}
+
+function vaultTotals() {
+  const recordCount = vaultClients.reduce((sum, client) => sum + clientProductRecords(client).length, 0);
+  const imageCount = vaultClients.reduce((sum, client) => sum + clientProductRecords(client).reduce((inner, item) => inner + (item.images || []).length, 0), 0);
+  return { clientCount: vaultClients.length, recordCount, imageCount };
+}
+
+function renderClientVaultLogin(error = "") {
+  clientVaultContent.innerHTML = `
+    <section class="vault-login" aria-label="客户方案库登录">
+      <div class="vault-login-visual">
+        <p class="vault-kicker">PRIVATE CLIENT SHOWROOM</p>
+        <h3>把客户方案，收进一个漂亮的保险柜。</h3>
+        <p>每个客户是一只带 Logo 标签的文件夹，点进去就是给 TA 做过的 Catalog、选品方案和活动提案。适合内部复盘，也适合展示给业务同事快速调用。</p>
+      </div>
+      <form class="vault-login-card" id="vaultLoginForm">
+        <h3>登录客户方案库</h3>
+        <p>客户登录后，只看到自己在 Levin 做过的产品记录与产品图片。</p>
+        <label class="vault-field">
+          账号
+          <input id="vaultUser" name="user" autocomplete="username" placeholder="请输入账号" required />
+        </label>
+        <label class="vault-field">
+          密码
+          <input id="vaultPassword" name="password" type="password" autocomplete="current-password" placeholder="请输入密码" required />
+        </label>
+        <p class="vault-error" id="vaultError">${escapeHtml(error)}</p>
+        <button class="primary-button" type="submit">进入客户方案库</button>
+        <p class="vault-demo-note">本地演示账号：<strong>marketing</strong>　密码：<strong>levin2026</strong><br />正式上线如果要真正保密，需要接入后端账号权限。</p>
+      </form>
+    </section>`;
+}
+
+function renderClientVaultHome() {
+  const totals = vaultTotals();
+  const selectedClient = vaultClients.find((client) => client.id === state.activeClient) || vaultClients[0];
+  if (selectedClient && state.activeClient !== selectedClient.id) state.activeClient = selectedClient.id;
+
+  const clientNav = vaultClients.map((client) => {
+    const records = clientProductRecords(client);
+    const imageCount = records.reduce((sum, item) => sum + (item.images || []).length, 0);
+    const active = selectedClient?.id === client.id;
+    const logo = client.logoImage
+      ? `<img src="${escapeHtml(client.logoImage)}" alt="${escapeHtml(client.name)} logo" />`
+      : escapeHtml(client.logo || client.name.slice(0, 2));
+
+    return `
+      <button class="client-nav-card ${active ? "is-active" : ""}" type="button" data-client="${escapeHtml(client.id)}" style="--folder-accent:${escapeHtml(client.accent || "#111111")}">
+        <span class="client-nav-logo">${logo}</span>
+        <span class="client-nav-copy">
+          <strong>${escapeHtml(client.name)}</strong>
+          <small>${escapeHtml(client.clientFullName || client.industry || "Client")}</small>
+        </span>
+        <span class="client-nav-count">${Number(records.length).toLocaleString()}</span>
+        <span class="client-nav-meta">${Number(imageCount).toLocaleString()} 图</span>
+      </button>`;
+  }).join("");
+
+  const selectedRecords = selectedClient ? clientProductRecords(selectedClient) : [];
+  const selectedImageCount = selectedRecords.reduce((sum, item) => sum + (item.images || []).length, 0);
+  const productTiles = selectedRecords.map((item) => {
+    const images = Array.isArray(item.images) ? item.images : [];
+    const heroImage = item.heroImage || images[0] || "";
+    const imageStrip = images.slice(0, 6).map((image, index) => `
+      <img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)} 产品图 ${index + 1}" loading="lazy" />`).join("");
+    const tags = (item.highlights || []).slice(0, 5).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+
+    return `
+      <article class="customer-product-tile">
+        <div class="customer-product-hero">
+          ${heroImage ? `<img src="${escapeHtml(heroImage)}" alt="${escapeHtml(item.name)}" loading="lazy" />` : `<span>${escapeHtml((item.name || "Product").slice(0, 2))}</span>`}
+        </div>
+        <div class="customer-product-info">
+          <div class="client-product-top">
+            <span>${escapeHtml(item.category || "Product")}</span>
+            <em>${escapeHtml(item.status || "Product record")}</em>
+          </div>
+          <h4>${escapeHtml(item.name)}</h4>
+          <p>${escapeHtml(item.note || "客户历史产品记录。")}</p>
+          <div class="client-product-facts">
+            <div><strong>${escapeHtml(item.date || "-")}</strong><small>完成时间</small></div>
+            <div><strong>${escapeHtml(item.recordId || "-")}</strong><small>产品记录号</small></div>
+          </div>
+          <div class="proposal-tags">${tags}</div>
+        </div>
+        ${imageStrip ? `<div class="customer-product-strip">${imageStrip}</div>` : ""}
+      </article>`;
+  }).join("");
+
+  clientVaultContent.innerHTML = `
+    <section class="vault-admin-layout" aria-label="客户产品管理台">
+      <aside class="client-directory" aria-label="客户导航">
+        <div class="client-directory-head">
+          <p class="eyebrow">MARKETING ADMIN</p>
+          <h3>客户目录</h3>
+          <p>按客户切换，右侧查看该客户在 Levin 做过的产品图片。</p>
+        </div>
+        <div class="client-directory-stats">
+          <div><strong>${totals.clientCount.toLocaleString()}</strong><span>客户</span></div>
+          <div><strong>${totals.recordCount.toLocaleString()}</strong><span>产品</span></div>
+          <div><strong>${totals.imageCount.toLocaleString()}</strong><span>图片</span></div>
+        </div>
+        <div class="client-nav-list">${clientNav}</div>
+        <button class="secondary-button vault-directory-logout" type="button" data-vault-logout>退出登录</button>
+      </aside>
+
+      <section class="client-workbench" aria-label="${selectedClient ? escapeHtml(selectedClient.name) : "客户"} 产品图片">
+        ${selectedClient ? `
+          <div class="client-workbench-hero" style="--folder-accent:${escapeHtml(selectedClient.accent || "#111111")}">
+            <span class="client-detail-logo">${selectedClient.logoImage ? `<img src="${escapeHtml(selectedClient.logoImage)}" alt="${escapeHtml(selectedClient.name)} logo" />` : escapeHtml(selectedClient.logo || selectedClient.name.slice(0, 2))}</span>
+            <div>
+              <p class="eyebrow">${escapeHtml(selectedClient.industry || "CLIENT")}</p>
+              <h3>${escapeHtml(selectedClient.name)}</h3>
+              <p>${escapeHtml(selectedClient.summary || "客户历史产品记录。")}</p>
+            </div>
+            <div class="client-workbench-numbers">
+              <div><strong>${selectedRecords.length.toLocaleString()}</strong><span>产品记录</span></div>
+              <div><strong>${selectedImageCount.toLocaleString()}</strong><span>产品图片</span></div>
+            </div>
+          </div>
+          <div class="customer-product-grid">${productTiles || `<div class="vault-empty-products">这个客户还没有录入产品图片。</div>`}</div>
+        ` : `<div class="vault-empty-products">还没有客户资料。</div>`}
+      </section>
+    </section>`;
+}
+
+function renderClientVaultDetail(client) {
+  const productCards = clientProductRecords(client).map((item) => {
+    const images = Array.isArray(item.images) ? item.images : [];
+    const heroImage = item.heroImage || images[0] || "";
+    const highlightTags = (item.highlights || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+    const gallery = images.slice(0, 5).map((image, index) => `
+      <img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)} 产品图 ${index + 1}" loading="lazy" />`).join("");
+
+    return `
+      <article class="client-product-card">
+        <div class="client-product-media">
+          ${heroImage ? `<img src="${escapeHtml(heroImage)}" alt="${escapeHtml(item.name)}" loading="lazy" />` : `<span>${escapeHtml((item.name || "Product").slice(0, 2))}</span>`}
+        </div>
+        <div class="client-product-copy">
+          <div class="client-product-top">
+            <span>${escapeHtml(item.category || "Product")}</span>
+            <em>${escapeHtml(item.status || "Product record")}</em>
+          </div>
+          <h4>${escapeHtml(item.name)}</h4>
+          <p>${escapeHtml(item.note || "客户历史产品记录。")}</p>
+          <div class="client-product-facts">
+            <div><strong>${escapeHtml(item.date || "-")}</strong><small>完成时间</small></div>
+            <div><strong>${escapeHtml(item.recordId || "-")}</strong><small>产品记录号</small></div>
+          </div>
+          <div class="proposal-tags">${highlightTags}</div>
+          ${gallery ? `<div class="client-product-gallery">${gallery}</div>` : ""}
+        </div>
+      </article>`;
+  }).join("");
+
+  clientVaultContent.innerHTML = `
+    <section class="vault-stage" aria-label="${escapeHtml(client.name)} 方案列表">
+      <div class="vault-detail-top">
+        <button class="vault-back" type="button" data-vault-back>← 返回客户文件夹</button>
+        <button class="secondary-button" type="button" data-vault-logout>退出登录</button>
+      </div>
+      <div class="client-detail-hero" style="--folder-accent:${escapeHtml(client.accent || "#ffd84d")}">
+        <span class="client-detail-logo">${escapeHtml(client.logo || client.name.slice(0, 2))}</span>
+        <div>
+          <p class="eyebrow">${escapeHtml(client.industry || "CLIENT")}</p>
+          <h3>${escapeHtml(client.name)}</h3>
+          <p>${escapeHtml(client.summary || "客户历史产品记录。")}</p>
+        </div>
+      </div>
+      <div class="client-product-grid">${productCards}</div>
+    </section>`;
+}
+
+function renderClientVault(error = "") {
+  if (!clientVaultContent) return;
+  if (!state.vaultUnlocked) {
+    renderClientVaultLogin(error);
+    return;
+  }
+  renderClientVaultHome();
+}
+
+function openClientVault() {
+  if (!clientVaultPanel) return;
+  detailPanel.classList.remove("is-open");
+  detailPanel.setAttribute("aria-hidden", "true");
+  collectionDrawer.classList.remove("is-open");
+  collectionDrawer.setAttribute("aria-hidden", "true");
+  clientVaultPanel.classList.add("is-open");
+  clientVaultPanel.setAttribute("aria-hidden", "false");
+  scrim.hidden = false;
+  renderClientVault();
+  const firstInput = clientVaultPanel.querySelector("input, button");
+  if (firstInput) firstInput.focus();
+}
+
+function logoutClientVault() {
+  state.activeClient = null;
+  setVaultSession(false);
+  renderClientVault();
 }
 
 grid.addEventListener("click", (event) => {
@@ -453,6 +710,7 @@ document.querySelector("#clearSearch").addEventListener("click", () => { searchI
 document.querySelector("#collectionButton").addEventListener("click", openCollection);
 document.querySelector("#closeCollection").addEventListener("click", closePanels);
 document.querySelector("#closeDetail").addEventListener("click", closePanels);
+document.querySelector("#closeClientVault").addEventListener("click", closePanels);
 scrim.addEventListener("click", closePanels);
 document.querySelector("#drawerList").addEventListener("click", (event) => { const remove = event.target.closest("[data-remove]"); if (remove) toggleSelected(remove.dataset.remove); });
 
@@ -467,9 +725,45 @@ detailContent.addEventListener("click", (event) => {
 
 document.querySelector("#createCatalog").addEventListener("click", () => showToast(`${TEXT.catalogLockedPrefix}${state.selected.size}${TEXT.catalogLockedSuffix}`));
 document.querySelector("#syncButton").addEventListener("click", () => showToast(TEXT.syncDone));
+
+clientVaultContent.addEventListener("submit", (event) => {
+  if (!event.target.closest("#vaultLoginForm")) return;
+  event.preventDefault();
+  const form = event.target;
+  const user = String(form.elements.user?.value || "").trim();
+  const password = String(form.elements.password?.value || "");
+  if (user === vaultCredentials.username && password === vaultCredentials.password) {
+    setVaultSession(true);
+    state.activeClient = null;
+    renderClientVault();
+    showToast("已进入客户方案库");
+  } else {
+    renderClientVault("账号或密码不正确，请再试一次。");
+  }
+});
+
+clientVaultContent.addEventListener("click", (event) => {
+  const clientButton = event.target.closest("[data-client]");
+  const backButton = event.target.closest("[data-vault-back]");
+  const logoutButton = event.target.closest("[data-vault-logout]");
+  const proposalButton = event.target.closest("[data-proposal-open]");
+  if (clientButton) {
+    state.activeClient = clientButton.dataset.client;
+    renderClientVault();
+  }
+  if (backButton) {
+    state.activeClient = null;
+    renderClientVault();
+  }
+  if (logoutButton) logoutClientVault();
+  if (proposalButton) showToast("下一步可以接入方案 PDF / PPT / 图片预览");
+});
+
 document.querySelectorAll(".nav-item").forEach((button) => button.addEventListener("click", () => {
   document.querySelectorAll(".nav-item").forEach((item) => item.classList.toggle("is-active", item === button));
-  if (button.dataset.view === "collections") openCollection();
+  if (button.dataset.view === "clientVault") openClientVault();
+  else if (button.dataset.view === "collections") openCollection();
+  else if (button.dataset.view === "products") closePanels();
   else if (button.dataset.view !== "products") showToast(`${button.textContent.trim()} ${TEXT.future}`);
   document.querySelector(".sidebar").classList.remove("is-open");
 }));
